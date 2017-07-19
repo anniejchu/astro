@@ -26,6 +26,7 @@ anim = animation.FuncAnimation(fig, animate, init_func=init, frames=50, interval
 #fig is like void setup in processing
 #animate changes the x and y every frame
 #interval = delay in ms
+#frames = how many frames it plays before restarting
 #blit tells the animation to only redraw the pieces of the plot that changed
 
 plt.show()

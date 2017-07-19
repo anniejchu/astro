@@ -22,7 +22,7 @@ def animate(i): #only takes i as a single parameter ALWAYS i = frame number
 	line.set_data(x,y)
 	return line,
 
-anim = animation.FuncAnimation(fig, animate, init_func=init, frames=150, interval=20, blit=True)
+anim = animation.FuncAnimation(fig, animate, init_func=init, frames=50, interval=20, blit=True)
 #fig is like void setup in processing
 #animate changes the x and y every frame
 #interval = delay in ms

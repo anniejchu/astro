@@ -1,14 +1,14 @@
 from visual import *
 
-ball = sphere(pos = vector(-5,0,0), radius = 0.5, color = color.green)
-wallR = box(pos = (6,0,0), size = (0.2, 12, 12), color = color.red)
-wallL = box(pos = (-6, 0, 0), size = (0.2, 12, 12), color = color.red)
+ball = sphere(pos = vector(-5,0,0), radius = 0.5, color =color.green) #green
+wallR = box(pos = (6,0,0), size = (0.2, 12, 12), color =color.green)
+wallL = box(pos = (-6, 0, 0), size = (0.2, 12, 12), color =color.cyan)
 wallUP = box(pos = (0,6,0), size = (12, 0.2, 12), color = color.cyan)
-wallD = box(pos = (0,-6, 0), size = (12,0.2,12), color = color.cyan)
-wallB = box(pos=(0,0,-6), size = (12, 12, 0.2), color = color.blue)
+wallD = box(pos = (0,-6, 0), size = (12,0.2,12), color = color.red)
+wallB = box(pos=(0,0,-6), size = (12, 12, 0.2), color = color.red)
 #wallF = box(pos = (0,0,6), size = (12,12, 0.2))
 
-ball.velocity = vector(25, 5, 6)
+ball.velocity = vector(25, 5, 16)
 ball.trail = curve(color = ball.color) #not actually a curve, ordered list of points
 
 vscale = 0.1

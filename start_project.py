@@ -2,6 +2,8 @@
 from visual import *
 import numpy as np
 
+#random variables
+origin = vector(0,0,0)
 #setup
 scene.width = 200
 scene.height = 100
@@ -20,13 +22,14 @@ c = 3.0 * 10**8
 radtomas = 206264806.247
 mtopc = 30856776000000000
 
+
 #calculating einstein radius 
 inv_dist_diff = (1.0/dL)-(1.0/dS)
-thetaE1 = (np.sqrt((4.0*G*mL/c**2) * inv_dist_diff)) # radians
-thetaE2 = thetaE1 * radtomas
+thetaE = (np.sqrt((4.0*G*mL/c**2) * inv_dist_diff)) # radians
+thetaE1 = thetaE * radtomas #in mas
 
 #finding einstein radius distance from center
-degreeE = (thetaE1 * 180)/np.pi # radians to degrees
+degreeE = (thetaE * 180)/np.pi # radians to degrees
 eradiusm = np.tan(degreeE)*dL #meters
 eradiuspc = eradiusm/mtopc
 eradiuspc_adjusted = eradiuspc*500000
@@ -48,10 +51,36 @@ def movingsource(deltaT, xlimit):
 		STAR.pos = STAR.pos + STAR.velocity*deltaT
 		rate(100)
 '''
-def movingsource1(t, deltaT, timelimit):
+def movingsource(t, deltaT, timelimit):
+	#FIND EINSTEIN CROSSING TIME, MAKE IT RELEVANT TO THIS FUNCTION
+	#REMEMBER THAT THE EINSTEIN CROSSING TIME IS JUST HALF OF THE GRAPH
 	while t < timelimit:
 		STAR.pos = STAR.pos + STAR.velocity*deltaT
 		t = t+deltaT
 		rate(100)
 
-movingsource1(-20, 0.05, 50)
+movingsource(-20, 0.05, 50)
+
+#light curve info ASK NIJAID WHAT THIS ANGLE IS
+	#radians
+	#BE ABLE TO USE THIS ANGLE TO CREATE A VECTOR USE TRIG????
+thetaS = diff_angle(STAR.pos, origin) 
+thetaPOS = (thetaS + np.sqrt((thetaS**2)+(4*thetaE)))/2
+thetaNEG = (thetaS - np.sqrt((thetaS**2)+(4*thetaE)))/2
+
+	#mas
+thetaS1 = thetaS * radtomas
+thetaPOS1 = (thetaS1 + np.sqrt((thetaS1**2)+(4*thetaE1)))/2
+thetaNEG1= (thetaS1 - np.sqrt((thetaS1**2)+(4*thetaE1)))/2
+
+
+#light magnification 
+#USE THIS TO EITHER CHANGE THE COLOR OR INTENSITY(OPAQUENESS)
+	#radians
+u = diff_angle(STAR.pos, LENS.pos)
+amp = ((u**2)+2)/(u*(np.sqrt((u**2)+4)))
+	#mas
+u1 = u *radtomas
+amp1 = ((u1**2)+2)/(u1*(np.sqrt((u1**2)+4)))
+
+

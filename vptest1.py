@@ -1,3 +1,4 @@
+'''
 from visual import *
 import numpy as np 
 from astropy import constants as const 
@@ -38,7 +39,7 @@ t = -10
 #lens positioning
 lPos = vector(0, 0, -dL)
 LENS = sphere(pos = lPos, radius = 100, color=color.blue)
-ER = ring(pos = lPos, radius = -- ) #BRING IN EQUATION WITH DR. LU'S CODE
+#ER = ring(pos = lPos, radius = -- ) #BRING IN EQUATION WITH DR. LU'S CODE
 
 
 def movingsource():
@@ -47,4 +48,33 @@ def movingsource():
 		t = t+deltaT
 		rate(100)
 
-movingsource()
+print(thetaE)
+
+'''
+
+from visual import *
+import numpy as np
+
+#setup
+scene.width = 800
+scene.heigh = 600
+
+#variables 
+imL = 5 #solar mass MUST CONVERT
+idL = 4000 #pc
+idS = 8000 #pc
+
+# conversion
+mL = imL * (1.99 * (10 ** 30))
+dL = idL * (30856775714409184)
+dS = idS * (30856775714409184)
+G = 6.67 * 10**-11
+c = 3.0 * 10**8
+radtomas = 206264806.247
+
+#calculating einstain radius in radians
+inv_dist_diff = (1.0/dL)-(1.0/dS)
+thetaE = (np.sqrt((4.0*G*mL/c**2) * inv_dist_diff))*radtomas
+
+
+print(thetaE)

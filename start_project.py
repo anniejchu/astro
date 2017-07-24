@@ -63,8 +63,15 @@ ER = ring(pos = lPos, radius = eradiuspc_adjusted, axis = (0,0,1), thickness=15,
 
 #source positioning 
 sPos = vector(-3000.0, 200.0, -idS)+OBPos
-STAR = sphere(pos=sPos, radius = 50, color = yellow)
+STAR = sphere(pos=sPos, radius = 30, color = yellow)
 STAR.velocity = vector(250, 0, 0)
+
+#LETS CREATE THE LIGHT CURVES
+plpos = vector(-eradiuspc_adjusted,0,-idL)+OBPos
+pluslight = sphere(pos=plpos, radius = 20, color = orange, opacity = opacity)
+plneg = vector(eradiuspc_adjusted, 0, -idL)+OBPos
+minuslight = sphere(pos=plneg, radius = 20, color = orange, opacity = opacity)
+
 
 
 #--------------DISPLAY SHIT---------------------------------------
@@ -124,15 +131,13 @@ def movingsource(t, deltaT, timelimit):
 
 
 		#light magnification 
-		#USE THIS TO EITHER CHANGE THE COLOR OR INTENSITY(OPAQUENESS)
-			#radians
+  			#radians
 		u = diff_angle(STAR.pos, LENS.pos)
 		amp = ((u**2)+2)/(u*(np.sqrt((u**2)+4)))
 			#mas
 		u1 = u *radtomas
 		amp1 = ((u1**2)+2)/(u1*(np.sqrt((u1**2)+4)))
 
-		print(thetaS)
 		t = t+deltaT
 		rate(100)
 

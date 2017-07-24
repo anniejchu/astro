@@ -23,7 +23,7 @@ cyan = (0,1,1)
 magenta = (1,0,1)
 black = (0,0,0)
 white = (1,1,1)
-opacity = 0.5
+opacity = 0.025
 
 #initial input variables 
 imL = 5 #solar mass 
@@ -85,6 +85,8 @@ llabel = label(pos = LENS.pos, text = 'LENS', yoffset=5, height = textsize, colo
 slabel = label(pos = STAR.pos, text = 'SOURCE', yoffset=5, height = textsize, color =white, line = False)
 erlabel = label(pos = ER.pos, text = 'EINSTEIN RADIUS', yoffset = slabel.yoffset+60, height = textsize-2, color = white, line = False)
 
+amplabel = label(pos = LENS.pos, yoffset = -200, text = 'AMP', height = 10, line=False)
+
 '''
 
 #light curve info ASK NIJAID WHAT THIS ANGLE IS
@@ -133,16 +135,17 @@ def movingsource(t, deltaT, timelimit):
 		#light magnification 
   			#radians
 		u = diff_angle(STAR.pos, LENS.pos)
-		amp = ((u**2)+2)/(u*(np.sqrt((u**2)+4)))
+		amp = (u**2+2)/(u*np.sqrt(u**2+4))
 			#mas
-		u1 = u *radtomas
-		amp1 = ((u1**2)+2)/(u1*(np.sqrt((u1**2)+4)))
+		u1 = (u *radtomas)
+		amp1 = ((u1**2.00)+2.00)/(u1*(np.sqrt((u1**2.00)+4.00)))
 
+		pluslight.opacity = opacity*amp
+		minuslight.opacity = opacity*amp
+
+		amplabel.text = 'AMP: '+str(amp)
 		t = t+deltaT
 		rate(100)
-
-
-
 
 
 

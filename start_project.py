@@ -31,10 +31,11 @@ imL = 5.0 #solar mass
 idL = 4000.0 #pc
 idS = 8000.0 #pc
 t0 = 57000.0
+tr = 2000.0
 muS =  np.array([8.0, 0.0])
 muL =  np.array([0.00, 0.00])
 beta = 1.8
-t = np.arange(t0-2000.0, t0+2000.0)
+t = np.arange(t0-tr, t0+tr)
 #xS0 = np.arange(-2000,2000)
 
 # conversion
@@ -113,7 +114,7 @@ LENS = sphere(pos = lPos, radius = 50, color=blue)
 ER = ring(pos = lPos, radius = eradiuspc_adjusted, axis = (0,0,1), thickness=15, color= white)
 
 #source positioning 
-sPos = vector(-2000.0, 200.0, -idS)+OBPos
+sPos = vector(-tr, 200.0, -idS)+OBPos
 STAR = sphere(pos=sPos, radius = 30, color = yellow)
 STAR.velocity = vector(1, 0, 0)
 
@@ -136,35 +137,6 @@ amplabel = label(pos = LENS.pos, yoffset = -200, text = 'AMP', height = 10, line
 tlabel = label(pos=LENS.pos, yoffset= -100, text = 'time', height = 10, line = False)
 
 #moving the lems
-
-def movingsource():
-	deltaT = 0.05
-	svel = STAR.velocity
-	t = 0
-	while t < 20:
-		STAR.pos = STAR.pos + svel
-		slabel.pos = slabel.pos + svel
-
-		u = diff_angle(STAR.pos, LENS.pos)
-		us = u/thetaE
-		amp = (us**2+2)/(us*np.sqrt(us**2+4))
-		loga = np.log(amp)
-			#mas
-		u1 = (u *radtomas)
-		u1s = u1/thetaE1
-		amp1 = ((u1s**2)+2)/(u1s*(np.sqrt((u1s**2)+4)))
-		loga1 = np.log(amp1)
-
-		amplabel.text = 'AMP: '+str(loga)
-		tlabel.text = 'Time: '+str(t)
-		pluslight.opacity = opacity*loga
-		minuslight.opacity = opacity*loga
-
-		print(amp1)
-
-		t = t+deltaT
-		rate(100)
-
 	
 def movingsource1(t = t, t0=t0, A = getamp()):
 	svel = STAR.velocity
@@ -179,23 +151,8 @@ def movingsource1(t = t, t0=t0, A = getamp()):
 		pluslight.opacity = opacity*A[x]
 		minuslight.opacity = opacity*A[x]
 
-	##	print('%.15f' %amp)
-	##	print('%.15f' %amp1)
 		x = x+1
 		rate(100)
 
 
 movingsource1()
-'''
-			#radians
-			#BE ABLE TO USE THIS ANGLE TO CREATE A VECTOR USE TRIG????
-		thetaS = diff_angle(STAR.pos, LENS.pos) 
-		thetaPOS = (thetaS + (np.sqrt((thetaS**2)+(4*thetaE))))/2
-		thetaNEG = (thetaS - (np.sqrt((thetaS**2)+(4*thetaE))))/2
-
-			#mas
-		thetaS1 = thetaS * radtomas
-		thetaPOS1 = (thetaS1 + np.sqrt((thetaS1**2)+(4*thetaE1)))/2
-		thetaNEG1= (thetaS1 - np.sqrt((thetaS1**2)+(4*thetaE1)))/2
-
-	'''	

@@ -191,17 +191,21 @@ def movingsource(t = t, t0=t0, A = getamp()):
 		pluslight.opacity = opacity*A[x]
 		minuslight.opacity = opacity*A[x]
 
+		pluslight.rotate(angle=pi/180, axis = (0,0,1), origin = LENS.pos)
+		minuslight.rotate(angle=pi/180, axis = (0,0,1), origin = LENS.pos)
+
 		amplabel.text = 'AMP: '+str(A[x])+'opacity: '+str(pluslight.opacity)
 		tlabel.text = 'Time: '+str(time-t0)	
 
 		x = x+1
-		rate(25)
+		rate(100)
 		
 
 def movinglight(t = t, t0 = t0):
 	for time in t: 
 	#	if time > -3*eradiuspc_adjusted and time < 2*eradiuspc_adjusted:
-		pluslight.rotate(angle=pi/4, axis = (0,0,1), origin = LENS.pos)
-		minuslight.rotate(angle=pi/4, axis = (0,0,1), origin = LENS.pos)
-#movingsource()
-movinglight()
+		pluslight.rotate(angle=pi/180, axis = (0,0,1), origin = LENS.pos)
+		minuslight.rotate(angle=pi/180, axis = (0,0,1), origin = LENS.pos)
+		rate(100)
+movingsource()
+#movinglight()

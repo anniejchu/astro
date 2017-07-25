@@ -24,7 +24,7 @@ cyan = (0,1,1)
 magenta = (1,0,1)
 black = (0,0,0)
 white = (1,1,1)
-opacity = 0.5
+opacity = 0.2
 
 #initial input variables 
 imL = 5.0 #solar mass 
@@ -183,22 +183,22 @@ def movingsource(t = t, t0=t0, A = getamp()):
 	rate(50)
 	svel = SOURCE.velocity
 	x = 0
-	A = A**40
+	A = A**80
 	for time in t:
+		if time-t0 > -1000.0 and time-t0 < 1000.0:
+			pluslight.rotate(angle=pi/1200, axis = (0,0,-1), origin = LENS.pos)
+			minuslight.rotate(angle=pi/1200, axis = (0,0,-1), origin = LENS.pos)
 		SOURCE.pos = SOURCE.pos + svel
 		slabel.pos = slabel.pos + svel
 
 		pluslight.opacity = opacity*A[x]
 		minuslight.opacity = opacity*A[x]
 
-		pluslight.rotate(angle=pi/180, axis = (0,0,1), origin = LENS.pos)
-		minuslight.rotate(angle=pi/180, axis = (0,0,1), origin = LENS.pos)
-
 		amplabel.text = 'AMP: '+str(A[x])+'opacity: '+str(pluslight.opacity)
 		tlabel.text = 'Time: '+str(time-t0)	
 
 		x = x+1
-		rate(100)
+		rate(500)
 		
 
 def movinglight(t = t, t0 = t0):

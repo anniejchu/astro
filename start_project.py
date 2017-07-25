@@ -12,7 +12,7 @@ scene.autoscale = False
 width = -300
 height = 200
 origin = vector(0,0,0)
-textsize = 12
+textsize = 10
 
 #color variables 
 red = (1,0,0)
@@ -124,18 +124,16 @@ plneg = vector(eradiuspc_adjusted, 0, -idL)+OBPos
 minuslight = sphere(pos=plneg, radius = 20, color = orange, opacity = opacity)
 
 #LABELS
-lmasslabel = label(pos = LENS.pos, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = width, yoffset = height, height = textsize, color = white, line = False, align = 'right')
-ldistancelabel = label(pos = LENS.pos, text = 'distance to lens: '+str(idL)+' parsecs', xoffset = width+120,yoffset= height, height = textsize, color = white, line = False, align = 'right')
-sdistancelabel = label(pos = LENS.pos, text = 'distance to source: '+str(idS)+ ' parsecs', xoffset = width+350, yoffset = height, height = textsize, color = white, line = False, align = 'right')
-erlabel1 = label(pos = LENS.pos, text = 'einstein radius (angular): '+str(thetaE1)+ ' MAS', xoffset = width+501, yoffset = height, height = textsize, color =white, line = False, align = 'right')
-#erlabel2 = label(pos = LENS.pos, text = '(distance): '+str(eradiuspc)+ ' parsecs', xoffset = width+700, yoffset = height, height = textsize, color = white, line = False, align = 'right')
-llabel = label(pos = LENS.pos, text = 'LENS', yoffset=5, height = textsize, color =white, line = False)
+lmasslabel = label(pos = LENS.pos, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
+ldistancelabel = label(pos = LENS.pos, text = 'distance to lens: '+str(idL)+' parsecs', xoffset = -280,yoffset= 195, height = textsize, color = white, line = False)
+sdistancelabel = label(pos = LENS.pos, text = 'distance to source: '+str(idS)+ ' parsecs', xoffset = -266, yoffset = 170, height = textsize, color = white, line = False)
+erlabel1 = label(pos = LENS.pos, text = 'einstein radius (angular): '+str(thetaE1)+ ' MAS', xoffset = -200, yoffset = 145, height = textsize, color =white, line = False)
+llabel = label(pos = LENS.pos, text = 'LENS', yoffset = -5, height = textsize-2, color =white, line = False)
 slabel = label(pos = STAR.pos, text = 'SOURCE', yoffset=5, height = textsize, color =white, line = False)
 erlabel = label(pos = ER.pos, text = 'EINSTEIN RADIUS', yoffset = slabel.yoffset+60, height = textsize-2, color = white, line = False)
 
 amplabel = label(pos = LENS.pos, yoffset = -200, text = 'AMP', height = 10, line=False)
 tlabel = label(pos=LENS.pos, yoffset= -100, text = 'time', height = 10, line = False)
-
 
 #moving the lems
 

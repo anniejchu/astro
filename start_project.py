@@ -24,12 +24,13 @@ cyan = (0,1,1)
 magenta = (1,0,1)
 black = (0,0,0)
 white = (1,1,1)
-opacity = 0.025
+opacity = 0.5
 
 #initial input variables 
 imL = 5.0 #solar mass 
 idL = 4000.0 #pc
 idS = 8000.0 #pc
+idLS = idS-idL
 t0 = 57000.0
 tr = 2000.0
 muS =  np.array([8.0, 0.0])
@@ -42,10 +43,11 @@ t = np.arange(t0-tr, t0+tr)
 mL = imL * (1.99 * (10 ** 30))
 dL = idL * (30856775714409184)
 dS = idS * (30856775714409184)
+dLS = dS-dL
 G = 6.67 * 10**-11
 c = 3.0 * 10**8
 radtomas = 206265000
-mtopc = 3.0856776000000000 * 10**16
+mtopc = 1/(3.0856776000000000 * 10**16)
 
 
 #relative velocity vector
@@ -61,7 +63,7 @@ thetaE_hat = muRel/ thetaE1
 #finding einstein radius distance from center
 degreeE = (thetaE * 180)/np.pi # radians to degrees
 eradiusm = np.tan(degreeE)*dL #meters
-eradiuspc = eradiusm/mtopc
+eradiuspc = eradiusm*mtopc
 eradiuspc_adjusted = eradiuspc*120000
 
 
@@ -115,14 +117,9 @@ ER = ring(pos = lPos, radius = eradiuspc_adjusted, axis = (0,0,1), thickness=15,
 
 #source positioning 
 sPos = vector(-tr, 200.0, -idS)+OBPos
-STAR = sphere(pos=sPos, radius = 30, color = yellow)
-STAR.velocity = vector(1, 0, 0)
+SOURCE = sphere(pos=sPos, radius = 30, color = yellow)
+SOURCE.velocity = vector(1, 0, 0)
 
-#LETS CREATE THE LIGHT CURVES
-plpos = vector(-eradiuspc_adjusted,0,-idL)+OBPos
-pluslight = sphere(pos=plpos, radius = 20, color = orange, opacity = opacity)
-plneg = vector(eradiuspc_adjusted, 0, -idL)+OBPos
-minuslight = sphere(pos=plneg, radius = 20, color = orange, opacity = opacity)
 
 #LABELS
 lmasslabel = label(pos = LENS.pos, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
@@ -130,29 +127,81 @@ ldistancelabel = label(pos = LENS.pos, text = 'distance to lens: '+str(idL)+' pa
 sdistancelabel = label(pos = LENS.pos, text = 'distance to source: '+str(idS)+ ' parsecs', xoffset = -266, yoffset = 170, height = textsize, color = white, line = False)
 erlabel1 = label(pos = LENS.pos, text = 'einstein radius (angular): '+str(thetaE1)+ ' MAS', xoffset = -200, yoffset = 145, height = textsize, color =white, line = False)
 llabel = label(pos = LENS.pos, text = 'LENS', yoffset = -5, height = textsize-2, color =white, line = False)
-slabel = label(pos = STAR.pos, text = 'SOURCE', yoffset=5, height = textsize, color =white, line = False)
+slabel = label(pos = SOURCE.pos, text = 'SOURCE', yoffset=5, height = textsize, color =white, line = False)
 erlabel = label(pos = ER.pos, text = 'EINSTEIN RADIUS', yoffset = slabel.yoffset+60, height = textsize-2, color = white, line = False)
 
 amplabel = label(pos = LENS.pos, yoffset = -200, text = 'AMP', height = 10, line=False)
 tlabel = label(pos=LENS.pos, yoffset= -100, text = 'time', height = 10, line = False)
 
-#moving the lems
-	
+
+
+thetaS = diff_angle(LENS.pos, SOURCE.pos)
+lthetaplus = (thetaS+np.sqrt((thetaS**2)+(4*thetaE)))/2
+lthetaminus = (thetaS-np.sqrt((thetaS**2)+(4*thetaE)))/2
+
+thetaS1 = thetaS * radtomas
+lthetaplus1 = lthetaplus* radtomas
+lthetaminus1 = lthetaminus * radtomas
+
+
+ldegreeplus = (lthetaplus*180)/np.pi
+ldistplusm = np.tan(ldegreeplus)*dLS
+ldistpluspc = ldistplusm * mtopc
+ldistpluspc_adjusted = ldistpluspc/400
+
+ldegreeminus = (lthetaminus*180)/np.pi
+ldistminusm = np.tan(ldegreeminus)*dLS
+ldistminuspc = ldistminusm * mtopc
+ldistminuspc_adjusted = ldistminuspc*9000
+
+
+#LETS CREATE THE LIGHT CURVES
+plpos = vector(-ldistpluspc_adjusted,0,-idL)+OBPos
+pluslight = sphere(pos=plpos, radius = 20, color = orange, opacity = opacity)
+plneg = vector(-ldistminuspc_adjusted, 0, -idL)+OBPos
+minuslight = sphere(pos=plneg, radius = 20, color = orange, opacity = opacity)
+'''
 def movingsource1(t = t, t0=t0, A = getamp()):
-	svel = STAR.velocity
+	svel = SOURCE.velocity
 	x = 0
-	A = A**10
+	A = A**20
 	for time in t:
-		STAR.pos = STAR.pos + svel
+		SOURCE.pos = SOURCE.pos + svel
 		slabel.pos = slabel.pos + svel
 
-		amplabel.text = 'AMP: '+str(A[x])
-		tlabel.text = 'Time: '+str(time-t0)
 		pluslight.opacity = opacity*A[x]
 		minuslight.opacity = opacity*A[x]
 
+		amplabel.text = 'AMP: '+str(A[x])+'opacity: '+str(pluslight.opacity)
+		tlabel.text = 'Time: '+str(time-t0)
+
 		x = x+1
-		rate(100)
+		rate(200)
+'''
 
+def movingsource(t = t, t0=t0, A = getamp()):
+	rate(50)
+	svel = SOURCE.velocity
+	x = 0
+	A = A**40
+	for time in t:
+		SOURCE.pos = SOURCE.pos + svel
+		slabel.pos = slabel.pos + svel
 
-movingsource1()
+		pluslight.opacity = opacity*A[x]
+		minuslight.opacity = opacity*A[x]
+
+		amplabel.text = 'AMP: '+str(A[x])+'opacity: '+str(pluslight.opacity)
+		tlabel.text = 'Time: '+str(time-t0)	
+
+		x = x+1
+		rate(25)
+		
+
+def movinglight(t = t, t0 = t0):
+	for time in t: 
+	#	if time > -3*eradiuspc_adjusted and time < 2*eradiuspc_adjusted:
+		pluslight.rotate(angle=pi/4, axis = (0,0,1), origin = LENS.pos)
+		minuslight.rotate(angle=pi/4, axis = (0,0,1), origin = LENS.pos)
+#movingsource()
+movinglight()

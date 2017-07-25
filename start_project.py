@@ -24,7 +24,7 @@ cyan = (0,1,1)
 magenta = (1,0,1)
 black = (0,0,0)
 white = (1,1,1)
-opacity = 0.2
+opacity = 0.7
 
 #initial input variables 
 imL = 5.0 #solar mass 
@@ -185,11 +185,14 @@ def movingsource(t = t, t0=t0, A = getamp()):
 	x = 0
 	A = A**80
 	for time in t:
-		if time-t0 > -1000.0 and time-t0 < 1000.0:
-			pluslight.rotate(angle=pi/1200, axis = (0,0,-1), origin = LENS.pos)
-			minuslight.rotate(angle=pi/1200, axis = (0,0,-1), origin = LENS.pos)
 		SOURCE.pos = SOURCE.pos + svel
 		slabel.pos = slabel.pos + svel
+		rotateangle = np.arctan(200/(np.absolute(SOURCE.pos.x-LENS.pos.x)))
+
+		if time-t0 > -1000.0 and time-t0 < 1000.0:
+			pluslight.rotate(angle=rotateangle, axis = (0,0,-1), origin = LENS.pos)
+			minuslight.rotate(angle=pi/1200, axis = (0,0,-1), origin = LENS.pos)
+
 
 		pluslight.opacity = opacity*A[x]
 		minuslight.opacity = opacity*A[x]
@@ -199,13 +202,10 @@ def movingsource(t = t, t0=t0, A = getamp()):
 
 		x = x+1
 		rate(500)
+		print(rotateangle)
 		
 
-def movinglight(t = t, t0 = t0):
-	for time in t: 
-	#	if time > -3*eradiuspc_adjusted and time < 2*eradiuspc_adjusted:
-		pluslight.rotate(angle=pi/180, axis = (0,0,1), origin = LENS.pos)
-		minuslight.rotate(angle=pi/180, axis = (0,0,1), origin = LENS.pos)
-		rate(100)
+
+
 movingsource()
 #movinglight()

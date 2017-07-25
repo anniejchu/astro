@@ -35,7 +35,7 @@ muS =  np.array([8.0, 0.0])
 muL =  np.array([0.00, 0.00])
 beta = 1.8
 t = np.arange(t0-2000.0, t0+2000.0)
-
+#xS0 = np.arange(-2000,2000)
 
 # conversion
 mL = imL * (1.99 * (10 ** 30))
@@ -113,9 +113,9 @@ LENS = sphere(pos = lPos, radius = 50, color=blue)
 ER = ring(pos = lPos, radius = eradiuspc_adjusted, axis = (0,0,1), thickness=15, color= white)
 
 #source positioning 
-sPos = vector(-3500.0, 200.0, -idS)+OBPos
+sPos = vector(-2000.0, 200.0, -idS)+OBPos
 STAR = sphere(pos=sPos, radius = 30, color = yellow)
-STAR.velocity = vector(5, 0, 0)
+STAR.velocity = vector(1, 0, 0)
 
 #LETS CREATE THE LIGHT CURVES
 plpos = vector(-eradiuspc_adjusted,0,-idL)+OBPos
@@ -177,7 +177,7 @@ def movingsource1(t = t, t0=t0, A = getamp()):
 		slabel.pos = slabel.pos + svel
 
 		amplabel.text = 'AMP: '+str(A[x])
-		tlabel.text = 'Time: '+str(time)
+		tlabel.text = 'Time: '+str(time-t0)
 		pluslight.opacity = opacity*A[x]
 		minuslight.opacity = opacity*A[x]
 

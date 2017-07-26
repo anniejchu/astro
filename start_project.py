@@ -11,7 +11,6 @@ scene.autoscale = False
 #random variables
 width = -300
 height = 200
-origin = vector(0,0,0)
 textsize = 10
 
 #color variables 
@@ -37,7 +36,11 @@ muS =  np.array([8.0, 0.0])
 muL =  np.array([0.00, 0.00])
 beta = 1.8
 t = np.arange(t0-tr, t0+tr)
-#xS0 = np.arange(-2000,2000)
+x0S = -tr
+y0S = 200.0
+x0L = 0.0
+y0L = 0.0
+origin = vector(0,0, -idL)
 
 # conversion
 mL = imL * (1.99 * (10 ** 30))
@@ -110,12 +113,12 @@ OBPos = vector(0,0,1)
 OB = sphere(pos = OBPos, radius = 1, color = white)
 
 #lens positioning
-lPos = vector(0, 0, -idL)+OBPos
+lPos = vector(x0L, y0L, -idL)+OBPos
 LENS = sphere(pos = lPos, radius = 50, color=blue)
 ER = ring(pos = lPos, radius = eradiuspc_adjusted, axis = (0,0,1), thickness=15, color= white)
 
 #source positioning 
-sPos = vector(-tr, 200.0, -idS)+OBPos
+sPos = vector(x0S, y0S, -idS)+OBPos
 SOURCE = sphere(pos=sPos, radius = 30, color = yellow)
 SOURCE.velocity = vector(1, 0, 0)
 
@@ -146,42 +149,26 @@ plneg = vector(-ldistminuspc_adjusted, 0, -idL)+OBPos
 minuslight = sphere(pos=plneg, radius = 20, color = orange, opacity = opacity)
 
 #LABELS
-lmasslabel = label(pos = LENS.pos, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
-ldistancelabel = label(pos = LENS.pos, text = 'distance to lens: '+str(idL)+' parsecs', xoffset = -280,yoffset= 195, height = textsize, color = white, line = False)
-sdistancelabel = label(pos = LENS.pos, text = 'distance to source: '+str(idS)+ ' parsecs', xoffset = -266, yoffset = 170, height = textsize, color = white, line = False)
-erlabel1 = label(pos = LENS.pos, text = 'einstein radius (angular): '+str(thetaE1)+ ' MAS', xoffset = -200, yoffset = 145, height = textsize, color =white, line = False)
+lmasslabel = label(pos = origin, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
+ldistancelabel = label(pos = origin, text = 'distance to lens: '+str(idL)+' parsecs', xoffset = -280,yoffset= 195, height = textsize, color = white, line = False)
+sdistancelabel = label(pos = origin, text = 'distance to source: '+str(idS)+ ' parsecs', xoffset = -266, yoffset = 170, height = textsize, color = white, line = False)
+erlabel1 = label(pos = origin, text = 'einstein radius (angular): '+str(thetaE1)+ ' MAS', xoffset = -200, yoffset = 145, height = textsize, color =white, line = False)
+
 llabel = label(pos = LENS.pos, text = 'LENS', yoffset = -5, height = textsize-2, color =white, line = False)
 slabel = label(pos = SOURCE.pos, text = 'SOURCE', yoffset=5, height = textsize, color =white, line = False)
 erlabel = label(pos = ER.pos, text = 'EINSTEIN RADIUS', yoffset = slabel.yoffset+60, height = textsize-2, color = white, line = False)
 
-amplabel = label(pos = LENS.pos, yoffset = -200, text = 'AMP', height = 10, line=False)
-tlabel = label(pos=LENS.pos, yoffset= -100, text = 'time', height = 10, line = False)
+amplabel = label(pos = origin, yoffset = -200, text = '', height = textsize, line=False)
+tlabel = label(pos=origin, yoffset= -100, text = '', height = textsize, line = False)
+sourceposlabel = label(pos = origin, yoffset = -200, xoffset = -250, text = '', height = textsize, line=False)
+lensposlabel = label(pos = origin, yoffset = -175, xoffset = -250, text = '', height = textsize, line=False)
 
-
-'''
-def movingsource1(t = t, t0=t0, A = getamp()):
-	svel = SOURCE.velocity
-	x = 0
-	A = A**20
-	for time in t:
-		SOURCE.pos = SOURCE.pos + svel
-		slabel.pos = slabel.pos + svel
-
-		pluslight.opacity = opacity*A[x]
-		minuslight.opacity = opacity*A[x]
-
-		amplabel.text = 'AMP: '+str(A[x])+'opacity: '+str(pluslight.opacity)
-		tlabel.text = 'Time: '+str(time-t0)
-
-		x = x+1
-		rate(200)
-'''
 
 def movingsource(t = t, t0=t0, A = getamp()):
 	rate(50)
 	svel = SOURCE.velocity
 	x = 0
-	A = A**80
+	A1 = A**80
 	for time in t:
 		SOURCE.pos = SOURCE.pos + svel
 		slabel.pos = slabel.pos + svel
@@ -201,11 +188,13 @@ def movingsource(t = t, t0=t0, A = getamp()):
 			minuslight.pos.x = np.cos(rotateangle)*ldistminuspc_adjusted
 			minuslight.pos.y = np.sin(rotateangle)*ldistminuspc_adjusted
 		
-		pluslight.opacity = opacity*A[x]
-		minuslight.opacity = opacity*A[x]
+		pluslight.opacity = opacity*A1[x]
+		minuslight.opacity = opacity*A1[x]
 
-		amplabel.text = 'AMP: '+str(A[x])+'opacity: '+str(pluslight.opacity)
+		amplabel.text = 'AMP: '+str(A1[x])+' (scaled e80)'+' REAL AMP: '+str(A[x])
 		tlabel.text = 'Time: '+str(time-t0)	
+		sourceposlabel.text = 'source x: '+str(SOURCE.pos.x)+' y: '+str(SOURCE.pos.y)
+		lensposlabel.text = 'lens x: '+str(LENS.pos.x)+' y: '+str(LENS.pos.y)
 
 		x = x+1
 		rate(500)

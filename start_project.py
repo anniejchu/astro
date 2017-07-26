@@ -165,17 +165,18 @@ sourceposlabel = label(pos = origin, yoffset = -200, xoffset = 300, text = '', h
 lensposlabel = label(pos = origin, yoffset = -175, xoffset = 300, text = '', height = textsize, line=False)
 
 
-#GRAPHS
-ampgraph = gdisplay(x=0, y = 300, width=500, height=500, title = 'AMP vs T', xtitle = 't', ytitle = 'amp', ymin = 1, ymax = 5, xmin = t0-tr, xmax = t0+tr)
-ampcurve = gcurve(gdisplay = ampgraph, color = white)
-
-ampadjgraph = gdisplay(x=500, y =300, width = 500, height = 500, title = 'AMP(e80) vs T', xtitle = 't', ytitle= 'amp (e80)', xmin = t0-tr, xmax = t0+tr)
-ampadjcurve = gcurve(gdisplay = ampgraph, color = white)
 
 def moving(t = t, t0=t0, A = getamp()):
 	svel = SOURCE.velocity
 	x = 0
 	A1 = A**80
+	A2 = np.log10(A)
+	#GRAPHS
+	ampgraph = gdisplay(x=0, y = 300, width=500, height=300, title = 'AMP vs T', xtitle = 't', ytitle = 'amp', ymin = 1, ymax = A1[tr], xmin = t0-tr, xmax = t0+tr)
+	ampcurve = gcurve(gdisplay = ampgraph, color = white)
+
+	#ampadjgraph = gdisplay(x=500, y =300, width = 500, height = 500, title = 'AMP(e80) vs T', xtitle = 't', ytitle= 'amp (e80)', ymin = 1, ymax = A1[tr], xmin = t0-tr, xmax = t0+tr)
+	ampadjcurve = gcurve(gdisplay = ampgraph, color = white)
 	for time in t:
 		SOURCE.pos = SOURCE.pos + svel
 		slabel.pos = slabel.pos + svel
@@ -210,7 +211,6 @@ def moving(t = t, t0=t0, A = getamp()):
 		
 		rate(500)
 		
-
 
 #graphamp()
 moving()

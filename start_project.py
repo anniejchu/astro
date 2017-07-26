@@ -185,17 +185,21 @@ def movingsource(t = t, t0=t0, A = getamp()):
 	for time in t:
 		SOURCE.pos = SOURCE.pos + svel
 		slabel.pos = slabel.pos + svel
-		rotateangle1 = np.arctan(200/(np.absolute(SOURCE.pos.x-LENS.pos.x)))
-		rotateangle = np.arctan(200.0/(SOURCE.pos.x-LENS.pos.x))
-
-		if time-t0 > -1000.0 and time-t0 < 1000:
-			if time-t0 != 0:
-			#pluslight.rotate(angle=rotateangle, axis = (0,0,-1), origin = LENS.pos)
-			#minuslight.rotate(angle=pi/1200, axis = (0,0,-1), origin = LENS.pos)
-				pluslight.pos.x = -np.cos(rotateangle)*ldistpluspc_adjusted
-				pluslight.pos.y = -np.sin(rotateangle)*ldistpluspc_adjusted
-				minuslight.pos.x = -np.cos(rotateangle)*ldistminuspc_adjusted
-				minuslight.pos.y = -np.sin(rotateangle)*ldistminuspc_adjusted
+		xdiff = SOURCE.pos.x-LENS.pos.x
+		if xdiff !=0:		
+			rotateangle = np.arctan(200.0/xdiff)
+		else:
+			rotateangle = 0.0
+		if time-t0 > -1500.0 and time-t0 < 0.0:
+			pluslight.pos.x = -np.cos(rotateangle)*ldistpluspc_adjusted
+			pluslight.pos.y = -np.sin(rotateangle)*ldistpluspc_adjusted
+			minuslight.pos.x = -np.cos(rotateangle)*ldistminuspc_adjusted
+			minuslight.pos.y = -np.sin(rotateangle)*ldistminuspc_adjusted
+		elif time-t0 > 0.0 and time-t0 < 1000.0:
+			pluslight.pos.x = np.cos(rotateangle)*ldistpluspc_adjusted
+			pluslight.pos.y = np.sin(rotateangle)*ldistpluspc_adjusted
+			minuslight.pos.x = np.cos(rotateangle)*ldistminuspc_adjusted
+			minuslight.pos.y = np.sin(rotateangle)*ldistminuspc_adjusted
 		
 		pluslight.opacity = opacity*A[x]
 		minuslight.opacity = opacity*A[x]

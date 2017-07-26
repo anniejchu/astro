@@ -61,10 +61,9 @@ thetaE1 = thetaE * radtomas #in mas
 thetaE_hat = muRel/ thetaE1
 
 #finding einstein radius distance from center
-degreeE = (thetaE * 180)/np.pi # radians to degrees
-eradiusm = np.tan(degreeE)*dL #meters
+eradiusm = np.tan(thetaE)*dL #meters
 eradiuspc = eradiusm*mtopc
-eradiuspc_adjusted = eradiuspc*120000
+eradiuspc_adjusted = eradiuspc*10**7
 
 
 #einstein crossing time
@@ -105,7 +104,7 @@ def getamp(u0=u0, thetaE_hat= thetaE_hat):
 
 
 
-#--------------DISPLAY SHIT---------------------------------------
+#--------------DISPLAY---------------------------------------
 #observers
 OBPos = vector(0,0,1)
 OB = sphere(pos = OBPos, radius = 1, color = white)
@@ -121,6 +120,31 @@ SOURCE = sphere(pos=sPos, radius = 30, color = yellow)
 SOURCE.velocity = vector(1, 0, 0)
 
 
+thetaS = diff_angle(LENS.pos, SOURCE.pos)
+lthetaplus = (thetaS+np.sqrt((thetaS**2)+(4*thetaE)))/2
+lthetaminus = (thetaS-np.sqrt((thetaS**2)+(4*thetaE)))/2
+
+thetaS1 = thetaS * radtomas
+lthetaplus1 = lthetaplus* radtomas
+lthetaminus1 = lthetaminus * radtomas
+
+
+#ldegreeplus = (lthetaplus*180)/np.pi
+ldistplusm = np.tan(lthetaplus)*dLS
+ldistpluspc = ldistplusm * mtopc
+ldistpluspc_adjusted = ldistpluspc/2
+
+ldistminusm = np.tan(lthetaminus)*dLS
+ldistminuspc = ldistminusm * mtopc
+ldistminuspc_adjusted = ldistminuspc*10**6
+
+
+#LETS CREATE THE LIGHT CURVES
+plpos = vector(-ldistpluspc_adjusted,0,-idL)+OBPos
+pluslight = sphere(pos=plpos, radius = 20, color = orange, opacity = opacity)
+plneg = vector(-ldistminuspc_adjusted, 0, -idL)+OBPos
+minuslight = sphere(pos=plneg, radius = 20, color = orange, opacity = opacity)
+
 #LABELS
 lmasslabel = label(pos = LENS.pos, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
 ldistancelabel = label(pos = LENS.pos, text = 'distance to lens: '+str(idL)+' parsecs', xoffset = -280,yoffset= 195, height = textsize, color = white, line = False)
@@ -134,32 +158,6 @@ amplabel = label(pos = LENS.pos, yoffset = -200, text = 'AMP', height = 10, line
 tlabel = label(pos=LENS.pos, yoffset= -100, text = 'time', height = 10, line = False)
 
 
-
-thetaS = diff_angle(LENS.pos, SOURCE.pos)
-lthetaplus = (thetaS+np.sqrt((thetaS**2)+(4*thetaE)))/2
-lthetaminus = (thetaS-np.sqrt((thetaS**2)+(4*thetaE)))/2
-
-thetaS1 = thetaS * radtomas
-lthetaplus1 = lthetaplus* radtomas
-lthetaminus1 = lthetaminus * radtomas
-
-
-ldegreeplus = (lthetaplus*180)/np.pi
-ldistplusm = np.tan(ldegreeplus)*dLS
-ldistpluspc = ldistplusm * mtopc
-ldistpluspc_adjusted = ldistpluspc/400
-
-ldegreeminus = (lthetaminus*180)/np.pi
-ldistminusm = np.tan(ldegreeminus)*dLS
-ldistminuspc = ldistminusm * mtopc
-ldistminuspc_adjusted = ldistminuspc*9000
-
-
-#LETS CREATE THE LIGHT CURVES
-plpos = vector(-ldistpluspc_adjusted,0,-idL)+OBPos
-pluslight = sphere(pos=plpos, radius = 20, color = orange, opacity = opacity)
-plneg = vector(-ldistminuspc_adjusted, 0, -idL)+OBPos
-minuslight = sphere(pos=plneg, radius = 20, color = orange, opacity = opacity)
 '''
 def movingsource1(t = t, t0=t0, A = getamp()):
 	svel = SOURCE.velocity
@@ -189,11 +187,14 @@ def movingsource(t = t, t0=t0, A = getamp()):
 		slabel.pos = slabel.pos + svel
 		rotateangle = np.arctan(200/(np.absolute(SOURCE.pos.x-LENS.pos.x)))
 
-		if time-t0 > -1000.0 and time-t0 < 1000.0:
-			pluslight.rotate(angle=rotateangle, axis = (0,0,-1), origin = LENS.pos)
-			minuslight.rotate(angle=pi/1200, axis = (0,0,-1), origin = LENS.pos)
-
-
+		if time-t0 > -1000.0 and time-t0 < 0:
+			#pluslight.rotate(angle=rotateangle, axis = (0,0,-1), origin = LENS.pos)
+			#minuslight.rotate(angle=pi/1200, axis = (0,0,-1), origin = LENS.pos)
+			pluslight.pos.x = np.cos(rotateangle)*ldistpluspc_adjusted
+			pluslight.pos.y = np.sin(rotateangle)*ldistpluspc_adjusted
+			minuslight.pos.x = np.cos(rotateangle)*ldistminuspc_adjusted
+			minuslight.pos.y = np.sin(rotateangle)*ldistminuspc_adjusted
+		
 		pluslight.opacity = opacity*A[x]
 		minuslight.opacity = opacity*A[x]
 
@@ -205,7 +206,11 @@ def movingsource(t = t, t0=t0, A = getamp()):
 		print(rotateangle)
 		
 
-
-
+'''
+print(np.sin(np.pi/2))
+print(eradiuspc_adjusted)
+print(ldistminuspc)
+print(ldistpluspc)
+'''
 movingsource()
-#movinglight()
+

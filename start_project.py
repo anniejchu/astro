@@ -1,5 +1,6 @@
 
 from visual import *
+from visual.graph import *
 import numpy as np
 import pdb
 #setup
@@ -144,9 +145,9 @@ ldistminuspc_adjusted = ldistminuspc*10**6
 
 #LETS CREATE THE LIGHT CURVES
 plpos = vector(-ldistpluspc_adjusted,0,-idL)+OBPos
-pluslight = sphere(pos=plpos, radius = 20, color = orange, opacity = opacity)
+pluslight = sphere(pos=plpos, radius = 20, color = white, opacity = opacity)
 plneg = vector(-ldistminuspc_adjusted, 0, -idL)+OBPos
-minuslight = sphere(pos=plneg, radius = 20, color = orange, opacity = opacity)
+minuslight = sphere(pos=plneg, radius = 20, color = white, opacity = opacity)
 
 #LABELS
 lmasslabel = label(pos = origin, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
@@ -154,18 +155,24 @@ ldistancelabel = label(pos = origin, text = 'distance to lens: '+str(idL)+' pars
 sdistancelabel = label(pos = origin, text = 'distance to source: '+str(idS)+ ' parsecs', xoffset = -266, yoffset = 170, height = textsize, color = white, line = False)
 erlabel1 = label(pos = origin, text = 'einstein radius (angular): '+str(thetaE1)+ ' MAS', xoffset = -200, yoffset = 145, height = textsize, color =white, line = False)
 
-llabel = label(pos = LENS.pos, text = 'LENS', yoffset = -5, height = textsize-2, color =white, line = False)
-slabel = label(pos = SOURCE.pos, text = 'SOURCE', yoffset=5, height = textsize, color =white, line = False)
-erlabel = label(pos = ER.pos, text = 'EINSTEIN RADIUS', yoffset = slabel.yoffset+60, height = textsize-2, color = white, line = False)
+llabel = label(pos = LENS.pos, text = 'L', height = textsize-2, color =white, line = False)
+slabel = label(pos = SOURCE.pos, text = 'S', yoffset = 2, height = textsize, color =white, line = False)
+erlabel = label(pos = ER.pos, text = 'ER', yoffset = llabel.yoffset+80, height = textsize-2, color = white, line = False)
 
 amplabel = label(pos = origin, yoffset = -200, text = '', height = textsize, line=False)
 tlabel = label(pos=origin, yoffset= -100, text = '', height = textsize, line = False)
-sourceposlabel = label(pos = origin, yoffset = -200, xoffset = -250, text = '', height = textsize, line=False)
-lensposlabel = label(pos = origin, yoffset = -175, xoffset = -250, text = '', height = textsize, line=False)
+sourceposlabel = label(pos = origin, yoffset = -200, xoffset = 300, text = '', height = textsize, line=False)
+lensposlabel = label(pos = origin, yoffset = -175, xoffset = 300, text = '', height = textsize, line=False)
 
 
-def movingsource(t = t, t0=t0, A = getamp()):
-	rate(50)
+#GRAPHS
+ampgraph = gdisplay(x=0, y = 300, width=500, height=500, title = 'AMP vs T', xtitle = 't', ytitle = 'amp', ymin = 1, ymax = 5, xmin = t0-tr, xmax = t0+tr)
+ampcurve = gcurve(gdisplay = ampgraph, color = white)
+
+ampadjgraph = gdisplay(x=500, y =300, width = 500, height = 500, title = 'AMP(e80) vs T', xtitle = 't', ytitle= 'amp (e80)', xmin = t0-tr, xmax = t0+tr)
+ampadjcurve = gcurve(gdisplay = ampgraph, color = white)
+
+def moving(t = t, t0=t0, A = getamp()):
 	svel = SOURCE.velocity
 	x = 0
 	A1 = A**80
@@ -196,15 +203,15 @@ def movingsource(t = t, t0=t0, A = getamp()):
 		sourceposlabel.text = 'source x: '+str(SOURCE.pos.x)+' y: '+str(SOURCE.pos.y)
 		lensposlabel.text = 'lens x: '+str(LENS.pos.x)+' y: '+str(LENS.pos.y)
 
+		ampcurve.plot(pos=(time, A[x]))
+		ampadjcurve.plot(pos=(time, A1[x]))
+
 		x = x+1
+		
 		rate(500)
 		
 
-'''
-print(np.sin(np.pi/2))
-print(eradiuspc_adjusted)
-print(ldistminuspc)
-print(ldistpluspc)
-'''
-movingsource()
+
+#graphamp()
+moving()
 

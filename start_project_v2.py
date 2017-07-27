@@ -139,7 +139,7 @@ ldistpluspc_adjusted = ldistpluspc/(thetaE1*.8)
 
 ldistminusm = np.tan(lthetaminus)*dLS
 ldistminuspc = ldistminusm * mtopc
-ldistminuspc_adjusted = ldistminuspc*10**5.5
+ldistminuspc_adjusted = ldistminuspc*(thetaE1*10**5)
 
 
 cent_adjusted = (ldistpluspc_adjusted+ldistminuspc_adjusted)/2
@@ -238,7 +238,5 @@ def moving(t = t, t0=t0, A = getamp()):
 		rate(500)
 		
 
-#graphamp()
+
 moving()
-
-

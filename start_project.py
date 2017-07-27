@@ -132,8 +132,6 @@ thetaS1 = thetaS * radtomas
 lthetaplus1 = lthetaplus* radtomas
 lthetaminus1 = lthetaminus * radtomas
 
-
-#ldegreeplus = (lthetaplus*180)/np.pi
 ldistplusm = np.tan(lthetaplus)*dLS
 ldistpluspc = ldistplusm * mtopc
 ldistpluspc_adjusted = ldistpluspc/2
@@ -142,13 +140,15 @@ ldistminusm = np.tan(lthetaminus)*dLS
 ldistminuspc = ldistminusm * mtopc
 ldistminuspc_adjusted = ldistminuspc*10**6
 
+cent_adjusted = (ldistpluspc_adjusted+ldistminuspc_adjusted)/2
 
 #LETS CREATE THE LIGHT CURVES
 plpos = vector(-ldistpluspc_adjusted,0,-idL)+OBPos
 pluslight = sphere(pos=plpos, radius = 20, color = white, opacity = opacity)
 plneg = vector(-ldistminuspc_adjusted, 0, -idL)+OBPos
 minuslight = sphere(pos=plneg, radius = 20, color = white, opacity = opacity)
-
+cenpos = vector(-cent_adjusted, 0, -idL)
+cenlight = sphere(pos=cenpos, radius = 20, color = white, opacity = opacity)
 #LABELS
 lmasslabel = label(pos = origin, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
 ldistancelabel = label(pos = origin, text = 'distance to lens: '+str(idL)+' parsecs', xoffset = -280,yoffset= 195, height = textsize, color = white, line = False)
@@ -177,6 +177,7 @@ def moving(t = t, t0=t0, A = getamp()):
 
 	#ampadjgraph = gdisplay(x=500, y =300, width = 500, height = 500, title = 'AMP(e80) vs T', xtitle = 't', ytitle= 'amp (e80)', ymin = 1, ymax = A1[tr], xmin = t0-tr, xmax = t0+tr)
 	ampadjcurve = gcurve(gdisplay = ampgraph, color = white)
+	
 	for time in t:
 		SOURCE.pos = SOURCE.pos + svel
 		slabel.pos = slabel.pos + svel
@@ -190,14 +191,20 @@ def moving(t = t, t0=t0, A = getamp()):
 			pluslight.pos.y = -np.sin(rotateangle)*ldistpluspc_adjusted
 			minuslight.pos.x = -np.cos(rotateangle)*ldistminuspc_adjusted
 			minuslight.pos.y = -np.sin(rotateangle)*ldistminuspc_adjusted
+			cenlight.pos.x = -np.cos(rotateangle)*cent_adjusted
+			cenlight.pos.y = -np.sin(rotateangle)*cent_adjusted
 		elif time-t0 > 0.0 and time-t0 < tr:
 			pluslight.pos.x = np.cos(rotateangle)*ldistpluspc_adjusted
 			pluslight.pos.y = np.sin(rotateangle)*ldistpluspc_adjusted
 			minuslight.pos.x = np.cos(rotateangle)*ldistminuspc_adjusted
 			minuslight.pos.y = np.sin(rotateangle)*ldistminuspc_adjusted
-		
+			cenlight.pos.x = np.cos(rotateangle)*cent_adjusted
+			cenlight.pos.y = np.sin(rotateangle)*cent_adjusted
+
+
 		pluslight.opacity = opacity*A1[x]
 		minuslight.opacity = opacity*A1[x]
+		cenlight.opacity = opacity*A1[x]
 
 		amplabel.text = 'AMP: '+str(A1[x])+' (scaled e80)'+' REAL AMP: '+str(A[x])
 		tlabel.text = 'Time: '+str(time-t0)	
@@ -214,4 +221,5 @@ def moving(t = t, t0=t0, A = getamp()):
 
 #graphamp()
 moving()
+
 

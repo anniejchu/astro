@@ -50,7 +50,7 @@ slmeetsline = paths.line(start=slmeetpos, end=spos)
 curve(pos=slmeetsline.pos)
 
 #IMAGE STUFF
-ok = lz-oz
+ok = sz-oz
 theta = atan2(ok,dl)
 iz = (tan(theta))*(ds)
 ipos = vector(sx, sy, iz-sz)
@@ -72,13 +72,13 @@ curve(pos=dlsline.pos)
 
 
 #LABELS
-lenslabel = label(pos = lpos, text = 'lens', yoffset = -2, height = 10, color = color.white, line = False)
-sourcelabel = label(pos = spos, text='source', yoffset = -2, height = 10, color = color.white, line = False)
-observerlabel = label(pos = opos, text='observer', yoffset = -2, height = 10, color = color.white, line = False)
-imagelabel = label(pos = ipos, text='image', yoffset = -2, height = 10, color = color.white, line = False)
-slmeetlabel = label(pos= slmeetpos, text= 'sl meet', yoffset= -2, height = 10, color = color.white, line = False)
+lenslabel = label(pos = lpos, text = 'lens', yoffset = -2, height = 10, color = color.white, line = False, box = False)
+sourcelabel = label(pos = spos, text='source', yoffset = -2, height = 10, color = color.white, line = False, box = False)
+observerlabel = label(pos = opos, text='observer', yoffset = -2, height = 10, color = color.white, line = False, box = False)
+imagelabel = label(pos = ipos, text='image', yoffset = -2, height = 10, color = color.white, line = False, box = False)
+slmeetlabel = label(pos= slmeetpos, text= 'sl meet', yoffset= -2, height = 10, color = color.white, line = False, box = False)
 
-dlslabel = label(pos = ((sx+lx)*.5, oy, oz-15), text = 'DLS: '+ str(dls) +' pc', color = color.white, height = 8, line = False)
-dllabel = label(pos = ((ox+lx)*.5, oy, oz-15), text = 'DL: '+ str(dl) +' pc', color = color.white,height = 8, line = False)
-dslabel = label(pos = ((ox+sx)*.5, oy, oz-25), text = 'DS: '+ str(ds) +' pc', color = color.white, height = 8,line = False)
+dlslabel = label(pos = ((sx+lx)*.5, oy, oz-15), text = 'DLS: '+ str(dls) +' pc', color = color.white, height = 8, line = False, box = False)
+dllabel = label(pos = ((ox+lx)*.5, oy, oz-15), text = 'DL: '+ str(dl) +' pc', color = color.white,height = 8, line = False, box = False)
+dslabel = label(pos = ((ox+sx)*.5, oy, oz-25), text = 'DS: '+ str(ds) +' pc', color = color.white, height = 8,line = False, box = False)
 

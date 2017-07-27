@@ -24,10 +24,10 @@ cyan = (0,1,1)
 magenta = (1,0,1)
 black = (0,0,0)
 white = (1,1,1)
-opacity = 0.3
+opacity = 0.1
 
 #initial input variables 
-imL = 5.0 #solar mass 
+imL = 10.0 #solar mass 
 idL = 4000.0 #pc
 idS = 8000.0 #pc
 idLS = idS-idL
@@ -37,10 +37,10 @@ muS =  np.array([8.0, 0.0])
 muL =  np.array([0.00, 0.00])
 beta = 1.8
 t = np.arange(t0-tr, t0+tr)
-x0S = -tr
-y0S = 200.0
-x0L = 0.0
-y0L = 0.0
+x0S = 0.0
+y0S = 0.0
+x0L = -tr
+y0L = 100.0
 origin = vector(0,0, -idL)
 
 # conversion
@@ -113,15 +113,15 @@ def getamp(u0=u0, thetaE_hat= thetaE_hat):
 OBPos = vector(0,0,1)
 OB = sphere(pos = OBPos, radius = 1, color = white)
 
-#lens positioning
-lPos = vector(x0L, y0L, -idL)+OBPos
-LENS = sphere(pos = lPos, radius = 50, color=blue)
+#SOURCE positioning
+sPos = vector(x0S, y0S, -idL)+OBPos
+SOURCE = sphere(pos = sPos, radius = 30, color=blue)
 
-#source positioning 
-sPos = vector(x0S, y0S, -idS)+OBPos
-SOURCE = sphere(pos=sPos, radius = 30, color = yellow)
-SOURCE.velocity = vector(1, 0, 0)
-ER = ring(pos = sPos, radius = eradiuspc_adjusted, axis = (0,0,1), thickness=15, color= white)
+#LENS positioning 
+lPos = vector(x0L, y0L, -idS)+OBPos
+LENS = sphere(pos=lPos, radius = 50, color = yellow)
+LENS.velocity = vector(1, 0, 0)
+ER = ring(pos = lPos, radius = eradiuspc_adjusted, axis = (0,0,1), thickness=15, color= white)
 
 
 thetaS = diff_angle(LENS.pos, SOURCE.pos)
@@ -134,21 +134,22 @@ lthetaminus1 = lthetaminus * radtomas
 
 ldistplusm = np.tan(lthetaplus)*dLS
 ldistpluspc = ldistplusm * mtopc
-ldistpluspc_adjusted = ldistpluspc/2
+ldistpluspc_adjusted = ldistpluspc/(thetaE1*.8)
 
 ldistminusm = np.tan(lthetaminus)*dLS
 ldistminuspc = ldistminusm * mtopc
-ldistminuspc_adjusted = ldistminuspc*10**6
+ldistminuspc_adjusted = ldistminuspc*10**5.5
+
 
 cent_adjusted = (ldistpluspc_adjusted+ldistminuspc_adjusted)/2
 
 #LETS CREATE THE LIGHT CURVES
-plpos = vector(-ldistpluspc_adjusted,0,-idS)+OBPos
-pluslight = sphere(pos=plpos, radius = 20, color = cyan, opacity = opacity)
-plneg = vector(-ldistminuspc_adjusted, 0, -idS)+OBPos
-minuslight = sphere(pos=plneg, radius = 20, color = cyan, opacity = opacity)
-cenpos = vector(-cent_adjusted, 0, -idS)
-cenlight = sphere(pos=cenpos, radius = 20, color = cyan, opacity = opacity)
+plpos = vector(-ldistpluspc_adjusted,y0L,-idL)+OBPos
+pluslight = sphere(pos=plpos, radius = 10, color = white, opacity = opacity)
+plneg = vector(-ldistminuspc_adjusted, y0L, -idL)+OBPos
+minuslight = sphere(pos=plneg, radius = 10, color = white, opacity = opacity)
+cenpos = vector(-cent_adjusted, y0L, -idL)
+cenlight = sphere(pos=cenpos, radius = 10, color = white, opacity = opacity)
 #LABELS
 lmasslabel = label(pos = origin, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
 ldistancelabel = label(pos = origin, text = 'distance to lens: '+str(idL)+' parsecs', xoffset = -280,yoffset= 195, height = textsize, color = white, line = False)
@@ -156,7 +157,7 @@ sdistancelabel = label(pos = origin, text = 'distance to source: '+str(idS)+ ' p
 erlabel1 = label(pos = origin, text = 'einstein radius (angular): '+str(thetaE1)+ ' MAS', xoffset = -200, yoffset = 145, height = textsize, color =white, line = False)
 
 llabel = label(pos = LENS.pos, text = 'L', height = textsize-2, color =white, line = False)
-slabel = label(pos = SOURCE.pos, text = 'S', xoffset = 1, yoffset = 0, height = textsize-2, color =white, line = False)
+slabel = label(pos = SOURCE.pos, text = 'S', yoffset = 2, height = textsize, color =white, line = False)
 erlabel = label(pos = ER.pos, text = 'ER', yoffset = llabel.yoffset+80, height = textsize-2, color = white, line = False)
 
 amplabel = label(pos = origin, yoffset = -200, text = '', height = textsize, line=False)
@@ -167,24 +168,22 @@ lensposlabel = label(pos = origin, yoffset = -175, xoffset = 300, text = '', hei
 
 
 def moving(t = t, t0=t0, A = getamp()):
-	svel = SOURCE.velocity
+	lvel = LENS.velocity
 	x = 0
-	A1 = A**20
-	A2 = np.log10(A)
+	A1 = A**80
 	#GRAPHS
 	ampgraph = gdisplay(x=0, y = 300, width=500, height=300, title = 'AMP vs T', xtitle = 't', ytitle = 'amp', ymin = 1, ymax = A1[tr], xmin = t0-tr, xmax = t0+tr)
 	ampcurve = gcurve(gdisplay = ampgraph, color = white)
 
 	#ampadjgraph = gdisplay(x=500, y =300, width = 500, height = 500, title = 'AMP(e80) vs T', xtitle = 't', ytitle= 'amp (e80)', ymin = 1, ymax = A1[tr], xmin = t0-tr, xmax = t0+tr)
 	ampadjcurve = gcurve(gdisplay = ampgraph, color = white)
-
+	
 	for time in t:
-		SOURCE.pos = SOURCE.pos + svel
-		slabel.pos = slabel.pos + svel
-		ER.pos = ER.pos + svel
-		erlabel.pos = erlabel.pos +svel
-
-		xdiff = SOURCE.pos.x-LENS.pos.x
+		LENS.pos = LENS.pos + lvel
+		llabel.pos = llabel.pos + lvel
+		ER.pos = ER.pos + lvel
+		erlabel.pos = erlabel.pos + lvel
+		xdiff = LENS.pos.x-SOURCE.pos.x
 		if xdiff !=0:		
 			rotateangle = np.arctan(200.0/xdiff)
 		else:

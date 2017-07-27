@@ -146,11 +146,11 @@ ldistminuspc_adjusted = ldistminuspc*10**5.5
 cent_adjusted = (ldistpluspc_adjusted+ldistminuspc_adjusted)/2
 
 #LETS CREATE THE LIGHT CURVES
-plpos = vector(-ldistpluspc_adjusted,y0L,-idL)+OBPos
+plpos = vector(-ldistpluspc_adjusted,0,-idL)+OBPos
 pluslight = sphere(pos=plpos, radius = 10, color = white, opacity = opacityplus)
-plneg = vector(-ldistminuspc_adjusted, y0L, -idL)+OBPos
+plneg = vector(-ldistminuspc_adjusted, 0, -idL)+OBPos
 minuslight = sphere(pos=plneg, radius = 10, color = white, opacity = opacityminus)
-cenpos = vector(-cent_adjusted, y0L, -idL)
+cenpos = vector(-cent_adjusted, 0, -idL)
 cenlight = sphere(pos=cenpos, radius = 10, color = white, opacity = opacitycen)
 #LABELS
 lmasslabel = label(pos = origin, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
@@ -176,9 +176,18 @@ def moving(t = t, t0=t0, A = getamp()):
 	#GRAPHS
 	ampgraph = gdisplay(x=0, y = 300, width=500, height=300, title = 'AMP vs T', xtitle = 't', ytitle = 'amp', ymin = 1, ymax = A1[tr], xmin = t0-tr, xmax = t0+tr)
 	ampcurve = gcurve(gdisplay = ampgraph, color = white)
-
-	#ampadjgraph = gdisplay(x=500, y =300, width = 500, height = 500, title = 'AMP(e80) vs T', xtitle = 't', ytitle= 'amp (e80)', ymin = 1, ymax = A1[tr], xmin = t0-tr, xmax = t0+tr)
 	ampadjcurve = gcurve(gdisplay = ampgraph, color = white)
+
+	lightcoordinatesx = gdisplay(x=600, y = 300, width=500, height=300, title = 'LIGHT CURVE(X) vs T', xtitle = 't', ytitle = 'x value',xmin = t0-tr, xmax = t0+tr)
+	pluslightx = gcurve(gdisplay = lightcoordinatesx, color = cyan)
+	minuslightx = gcurve(gdisplay = lightcoordinatesx, color = red)
+	cenlightx = gcurve(gdisplay = lightcoordinatesx, color = white)
+
+	lightcoordinatesy = gdisplay(x=600, y = 0, width=500, height=300, title = 'LIGHT CURVE(Y) vs T', xtitle = 't', ytitle = 'y value',xmin = t0-tr, xmax = t0+tr)
+	pluslighty = gcurve(gdisplay = lightcoordinatesy, color = cyan)
+	minuslighty = gcurve(gdisplay = lightcoordinatesy, color = red)
+	cenlighty = gcurve(gdisplay = lightcoordinatesy, color = white)
+	
 	
 	for time in t:
 		LENS.pos = LENS.pos + lvel
@@ -217,6 +226,13 @@ def moving(t = t, t0=t0, A = getamp()):
 
 		ampcurve.plot(pos=(time, A[x]))
 		ampadjcurve.plot(pos=(time, A1[x]))
+		pluslightx.plot(pos=(time, pluslight.pos.x))
+		pluslighty.plot(pos=(time, pluslight.pos.y))
+		minuslightx.plot(pos=(time, minuslight.pos.x))
+		minuslighty.plot(pos=(time,minuslight.pos.y))
+		cenlightx.plot(pos=(time, cenlight.pos.x))
+		cenlighty.plot(pos=(time, cenlight.pos.y))
+
 
 		x = x+1
 		

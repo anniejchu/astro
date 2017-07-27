@@ -4,15 +4,14 @@ from visual.graph import *
 import numpy as np
 import pdb
 #setup
-scene = display(title = 'microlensing', width = 1000, height = 500, background = color.black)
+scene = display(title = 'microlensing', width = 750, height = 350, background = color.black)
 
 scene.autoscale = False
 
 
 #random variables
-width = -300
-height = 200
 textsize = 10
+xoff = -200
 
 #color variables 
 red = (1,0,0)
@@ -153,19 +152,19 @@ minuslight = sphere(pos=plneg, radius = 10, color = white, opacity = opacityminu
 cenpos = vector(-cent_adjusted, 0, -idL)
 cenlight = sphere(pos=cenpos, radius = 10, color = white, opacity = opacitycen)
 #LABELS
-lmasslabel = label(pos = origin, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
-ldistancelabel = label(pos = origin, text = 'distance to lens: '+str(idL)+' parsecs', xoffset = -280,yoffset= 195, height = textsize, color = white, line = False)
-sdistancelabel = label(pos = origin, text = 'distance to source: '+str(idS)+ ' parsecs', xoffset = -266, yoffset = 170, height = textsize, color = white, line = False)
-erlabel1 = label(pos = origin, text = 'einstein radius (angular): '+str(thetaE1)+ ' MAS', xoffset = -200, yoffset = 145, height = textsize, color =white, line = False)
+lmasslabel = label(pos = origin, text = 'ML: '+ str(imL) +' solar masses', xoffset = xoff, yoffset = 140, height = textsize, color = white, line = False)
+ldistancelabel = label(pos = origin, text = 'DL: '+str(idL)+' parsecs', xoffset = xoff,yoffset= 120, height = textsize, color = white, line = False)
+sdistancelabel = label(pos = origin, text = 'DS: '+str(idS)+ ' parsecs', xoffset = xoff, yoffset = 100, height = textsize, color = white, line = False)
+erlabel1 = label(pos = origin, text = 'ER(mas): '+str(thetaE1), xoffset = xoff, yoffset = 80, height = textsize, color =white, line = False)
 
 llabel = label(pos = LENS.pos, text = 'L', height = textsize-2, color =white, line = False)
 slabel = label(pos = SOURCE.pos, text = 'S', yoffset = 2, height = textsize, color =white, line = False)
-erlabel = label(pos = ER.pos, text = 'ER', yoffset = llabel.yoffset+80, height = textsize-2, color = white, line = False)
+erlabel = label(pos = ER.pos, text = 'ER', yoffset = llabel.yoffset+50, height = textsize-2, color = white, line = False)
 
-amplabel = label(pos = origin, yoffset = -200, text = '', height = textsize, line=False)
+amplabel = label(pos = origin, yoffset = -120, text = '', height = textsize, line=False)
 tlabel = label(pos=origin, yoffset= -100, text = '', height = textsize, line = False)
-sourceposlabel = label(pos = origin, yoffset = -200, xoffset = 300, text = '', height = textsize, line=False)
-lensposlabel = label(pos = origin, yoffset = -175, xoffset = 300, text = '', height = textsize, line=False)
+sourceposlabel = label(pos = origin, yoffset = -100, xoffset = xoff, text = '', height = textsize, line=False)
+lensposlabel = label(pos = origin, yoffset = -120, xoffset = xoff, text = '', height = textsize, line=False)
 
 
 
@@ -174,16 +173,16 @@ def moving(t = t, t0=t0, A = getamp()):
 	x = 0
 	A1 = A**5
 	#GRAPHS
-	ampgraph = gdisplay(x=0, y = 300, width=500, height=300, title = 'AMP vs T', xtitle = 't', ytitle = 'amp', ymin = 1, ymax = A1[tr], xmin = t0-tr, xmax = t0+tr)
+	ampgraph = gdisplay(x=0, y = 350, width=500, height=300, title = 'AMP vs T', xtitle = 't', ytitle = 'amp', ymin = 1, ymax = A1[tr], xmin = t0-tr, xmax = t0+tr)
 	ampcurve = gcurve(gdisplay = ampgraph, color = white)
 	ampadjcurve = gcurve(gdisplay = ampgraph, color = white)
 
-	lightcoordinatesx = gdisplay(x=600, y = 300, width=500, height=300, title = 'LIGHT CURVE(X) vs T', xtitle = 't', ytitle = 'x value',xmin = t0-tr, xmax = t0+tr)
+	lightcoordinatesx = gdisplay(x=800, y = 350, width=500, height=300, title = 'LIGHT CURVE(X) vs T', xtitle = 't', ytitle = 'x value',xmin = t0-tr, xmax = t0+tr)
 	pluslightx = gcurve(gdisplay = lightcoordinatesx, color = cyan)
 	minuslightx = gcurve(gdisplay = lightcoordinatesx, color = red)
 	cenlightx = gcurve(gdisplay = lightcoordinatesx, color = white)
 
-	lightcoordinatesy = gdisplay(x=600, y = 0, width=500, height=300, title = 'LIGHT CURVE(Y) vs T', xtitle = 't', ytitle = 'y value',xmin = t0-tr, xmax = t0+tr)
+	lightcoordinatesy = gdisplay(x=800, y = 0, width=500, height=300, title = 'LIGHT CURVE(Y) vs T', xtitle = 't', ytitle = 'y value',xmin = t0-tr, xmax = t0+tr)
 	pluslighty = gcurve(gdisplay = lightcoordinatesy, color = cyan)
 	minuslighty = gcurve(gdisplay = lightcoordinatesy, color = red)
 	cenlighty = gcurve(gdisplay = lightcoordinatesy, color = white)

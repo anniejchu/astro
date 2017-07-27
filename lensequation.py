@@ -58,6 +58,5 @@ ps = points(pos=pspos, size = 10, color = color.cyan)
 opsline = paths.line(start=opos, end=pspos, np = 20)
 curve(pos=opsline.pos)
 
-idk = psz-oz
-t2 = atan2(idk, ds)*180/pi
-print(ds)
+psperpline = paths.line(start=pspos, end=spos)
+curve(pos=psperpline.pos)

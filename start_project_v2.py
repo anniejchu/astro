@@ -146,11 +146,11 @@ cent_adjusted = (ldistpluspc_adjusted+ldistminuspc_adjusted)/2
 
 #LETS CREATE THE LIGHT CURVES
 plpos = vector(-ldistpluspc_adjusted,0,-idL)+OBPos
-pluslight = sphere(pos=plpos, radius = 10, color = white, opacity = opacityplus)
+pluslight = sphere(pos=plpos, radius = 20, color = cyan, opacity = opacityplus)
 plneg = vector(-ldistminuspc_adjusted, 0, -idL)+OBPos
-minuslight = sphere(pos=plneg, radius = 10, color = white, opacity = opacityminus)
+minuslight = sphere(pos=plneg, radius = 20, color = red, opacity = opacityminus)
 cenpos = vector(-cent_adjusted, 0, -idL)
-cenlight = sphere(pos=cenpos, radius = 10, color = white, opacity = opacitycen)
+cenlight = sphere(pos=cenpos, radius = 20, color = white, opacity = opacitycen)
 #LABELS
 lmasslabel = label(pos = origin, text = 'ML: '+ str(imL) +' solar masses', xoffset = xoff, yoffset = 140, height = textsize, color = white, line = False)
 ldistancelabel = label(pos = origin, text = 'DL: '+str(idL)+' parsecs', xoffset = xoff,yoffset= 120, height = textsize, color = white, line = False)

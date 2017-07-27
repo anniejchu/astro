@@ -24,7 +24,9 @@ cyan = (0,1,1)
 magenta = (1,0,1)
 black = (0,0,0)
 white = (1,1,1)
-opacity = 0.1
+opacityplus = 0.4
+opacityminus = 0.2
+opacitycen = 0.3
 
 #initial input variables 
 imL = 10.0 #solar mass 
@@ -145,11 +147,11 @@ cent_adjusted = (ldistpluspc_adjusted+ldistminuspc_adjusted)/2
 
 #LETS CREATE THE LIGHT CURVES
 plpos = vector(-ldistpluspc_adjusted,y0L,-idL)+OBPos
-pluslight = sphere(pos=plpos, radius = 10, color = white, opacity = opacity)
+pluslight = sphere(pos=plpos, radius = 10, color = white, opacity = opacityplus)
 plneg = vector(-ldistminuspc_adjusted, y0L, -idL)+OBPos
-minuslight = sphere(pos=plneg, radius = 10, color = white, opacity = opacity)
+minuslight = sphere(pos=plneg, radius = 10, color = white, opacity = opacityminus)
 cenpos = vector(-cent_adjusted, y0L, -idL)
-cenlight = sphere(pos=cenpos, radius = 10, color = white, opacity = opacity)
+cenlight = sphere(pos=cenpos, radius = 10, color = white, opacity = opacitycen)
 #LABELS
 lmasslabel = label(pos = origin, text = 'lens mass: '+ str(imL) +' solar masses', xoffset = -300, yoffset = 220, height = textsize, color = white, line = False)
 ldistancelabel = label(pos = origin, text = 'distance to lens: '+str(idL)+' parsecs', xoffset = -280,yoffset= 195, height = textsize, color = white, line = False)
@@ -170,7 +172,7 @@ lensposlabel = label(pos = origin, yoffset = -175, xoffset = 300, text = '', hei
 def moving(t = t, t0=t0, A = getamp()):
 	lvel = LENS.velocity
 	x = 0
-	A1 = A**80
+	A1 = A**5
 	#GRAPHS
 	ampgraph = gdisplay(x=0, y = 300, width=500, height=300, title = 'AMP vs T', xtitle = 't', ytitle = 'amp', ymin = 1, ymax = A1[tr], xmin = t0-tr, xmax = t0+tr)
 	ampcurve = gcurve(gdisplay = ampgraph, color = white)
@@ -204,9 +206,9 @@ def moving(t = t, t0=t0, A = getamp()):
 			cenlight.pos.y = np.sin(rotateangle)*cent_adjusted
 
 
-		pluslight.opacity = opacity*A1[x]
-		minuslight.opacity = opacity*A1[x]
-		cenlight.opacity = opacity*A1[x]
+		pluslight.opacity = opacityplus*A1[x]
+		minuslight.opacity = opacityminus*A1[x]
+		cenlight.opacity = opacitycen*A1[x]
 
 		amplabel.text = 'AMP: '+str(A1[x])+' (scaled e80)'+' REAL AMP: '+str(A[x])
 		tlabel.text = 'Time: '+str(time-t0)	

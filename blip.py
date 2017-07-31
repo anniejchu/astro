@@ -5,10 +5,9 @@ scene.width = 600
 scene.height = 600
 scene.autoscale = False
 scene.range = 100
+scene.title = 'BLIP'
 
-
-
-def lensmoving():
+def randostars():
 	rx = []
 	ry = []
 	opacity = []
@@ -20,6 +19,9 @@ def lensmoving():
 		radius.append(random.uniform(1,2))
 		sphere(pos=(rx[x],ry[x],0), radius = radius[x], color = color.white, opacity = opacity[x])
 
+
+
+def lensmoving():
 	sx = random.randint(-50,50)
 	sy = random.randint(-50,50)
 	source = sphere(pos=(sx,sy,0), radius = 1.5, color = color.white, opacity = 0.1)
@@ -45,5 +47,5 @@ def lensmoving():
 
 		rate(10)
 
+randostars()
 lensmoving()
-#stargrid(100,120)

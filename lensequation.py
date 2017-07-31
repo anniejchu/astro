@@ -63,6 +63,8 @@ beta = atan2(ok, ds)
 	#ALPHA
 alpha = theta-beta
 
+#beta opposite
+oppbeta = tan(beta)*dl
 
 #IMAGE STUFF
 ok = sz-oz
@@ -96,6 +98,9 @@ dlslabel = label(pos = ((sx+lx)*.5, oy, oz-15), text = 'DLS: '+ str(dls) +' pc',
 dllabel = label(pos = ((ox+lx)*.5, oy, oz-15), text = 'DL: '+ str(dl) +' pc', color = color.white,height = 8, line = False, box = False)
 dslabel = label(pos = ((ox+sx)*.5, oy, oz-25), text = 'DS: '+ str(ds) +' pc', color = color.white, height = 8,line = False, box = False)
 
+nlabel = label(pos = (sx, oy, (oz+sz)/2), text = 'n: '+str(sz-oz), color = color.cyan, height = 10, line = False, box = False)
+zilabel = label(pos=slmeetpos, text = 'ξ: '+str((lz-oz)-oppbeta), yoffset = -slmeetpos.z, color = color.cyan, height = 10, line = False, box = False)
+
 
 #show axes
 arb = vector(150, 0, oz)
@@ -111,6 +116,7 @@ yalab = label(pos = (arb.x, arb.y+length, arb.z), text = 'y', color = color.whit
 zaxis = arrow(pos=(arb), axis = (0,0,1), length = length, color = color.white, shaftwidth = sw)
 zalab = label(pos = (arb.x, arb.y, arb.z+length), text = 'z', color = color.white, line = False, box = False)
 
+
 #show title
 #title = label(pos = (-50, 0, 200), text = 'LENS EQUATION', height = 20, color = color.white)
 
@@ -118,15 +124,32 @@ zalab = label(pos = (arb.x, arb.y, arb.z+length), text = 'z', color = color.whit
 	#THETA
 thetaarc = paths.arc(pos = opos, radius = 20, angle1 = 0, angle2 = -theta)
 curve(pos=thetaarc.pos)
-thetalab = label(pos = opos, text = 'θ', xoffset = 12, yoffset = 10, height = 13, color = color.white, line = False, box= False)
-
+thetatext = label(pos = opos, text="θ", box = False, xoffset = -15, yoffset = 5, height=10)
 	#BETA
 betaarc = paths.arc(pos = opos, radius = 25, angle1 = 0, angle2 = -beta)
 curve(pos=betaarc.pos)
-betalab = label(pos = opos, text = 'β', xoffset = 55, yoffset = 20, height = 13, color = color.white, line = False, box= False)
-
+betatext = label(pos = (opos.x+23, opos.y, opos.z+7), text = 'β', box = False, xoffset = -40, yoffset = 20, height = 10)
 	#ALPHA
 alphaarc = paths.arc(pos = opos, radius = 30, angle1 = -beta, angle2 = -theta)
 curve(pos=alphaarc.pos)
-alphalab = label(pos = opos, text = 'α', xoffset = 45, yoffset = 42	, height = 13, color = color.white, line = False, box= False)
+alphatext = label(pos = (opos.x+20, opos.y, opos.z+17), text = 'α', box = False, xoffset = -45, yoffset = 20, height = 10)
+	#DEFLECT ANGLE
+deflectangle = paths.arc(pos = slmeetpos, radius = 20, angle1 = 0, angle2 = -theta)
+curve(pos =deflectangle.pos)
+deflecttext = label(pos = slmeetpos, text = "α'", box = False, xoffset = 20, yoffset = 10, height = 10) 
 
+#print out data
+ix = -120
+iy = 0
+iz = 100
+
+init = vector(ix, iy, iz)
+
+thetamas = 206265000*theta
+betamas = 206265000*beta
+alphamas = 206265000* alpha
+
+#printout
+print('theta (rad) : '+str(theta)+' (mas): '+str(thetamas))
+print('beta (rad) : '+str(beta)+' (mas): '+str(betamas))
+print('alpha (rad) : '+str(alpha)+' (mas): '+str(alphamas))

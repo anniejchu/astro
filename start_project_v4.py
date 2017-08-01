@@ -24,9 +24,6 @@ cyan = (0,1,1)
 magenta = (1,0,1)
 black = (0,0,0)
 white = (1,1,1)
-opacityplus = 0.3
-opacityminus = 0.1
-opacitycen = 0.2
 
 
 
@@ -152,7 +149,7 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 	LENS.velocity = vector(1, 0, 0)
 	ER = ring(pos = lPos, radius = ac.eradiuspc_adjusted, axis = (0,0,1), thickness=15, color= white)
 
-
+	#LETS DO MATH FOR THE LIGHT CURVES
 	thetaS = diff_angle(LENS.pos, SOURCE.pos)
 	lthetaplus = (thetaS+np.sqrt((thetaS**2)+(4*ac.thetaE)))/2
 	lthetaminus = (thetaS-np.sqrt((thetaS**2)+(4*ac.thetaE)))/2
@@ -160,6 +157,10 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 	thetaS1 = thetaS * radtomas
 	lthetaplus1 = lthetaplus* radtomas
 	lthetaminus1 = lthetaminus * radtomas
+
+	opacityplus = 0.3
+	opacityminus = 0.1
+	opacitycen = (lthetaplus*opacityplus+lthetaminus*opacityminus)/(opacityplus+opacityminus)
 
 	ldistplusm = np.tan(lthetaplus)*ac.dLS
 	ldistpluspc = ldistplusm * mtopc
@@ -170,9 +171,9 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 	ldistminuspc_adjusted = ldistminuspc*(ac.thetaE1*10**5)
 
 
-	cent_adjusted = (ldistpluspc_adjusted+ldistminuspc_adjusted)/2
+	cent_adjusted = (ldistpluspc_adjusted*opacityplus+ldistminuspc_adjusted*opacityminus)/(opacityplus+opacityminus)
 
-	#LETS CREATE THE LIGHT CURVES
+	#LETS DRAW THE LIGHT CURVES
 	plpos = vector(-ldistpluspc_adjusted,0,-ac.idL)
 	pluslight = sphere(pos=plpos, radius = 20, color = yellow, opacity = opacityplus)
 	plneg = vector(-ldistminuspc_adjusted, 0, -ac.idL)
@@ -267,6 +268,7 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 
 		x = x+1
 		
+		print(cent_adjusted)
 		rate(500)
 		
 

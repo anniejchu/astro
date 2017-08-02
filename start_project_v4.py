@@ -70,7 +70,7 @@ class PSPL(object):
 		#finding einstein radius distance from center
 		eradiusm = np.tan(self.thetaE)*self.dL #meters
 		eradiuspc = eradiusm*mtopc #pc
-		self.eradiuspc_adjusted = eradiuspc*10**7
+		self.eradiuspc_adjusted = eradiuspc*10**6.5
 
 
 		#einstein crossing time
@@ -93,8 +93,10 @@ class PSPL(object):
 		self.u0_amp = self.beta / self.thetaE1
 		self.u0 = np.abs(self.u0_amp) * self.u0_hat
 
-		return
+		#angular separation between source and lens vector
+		self.thetaS0 = self.u0 * self.thetaE1
 
+		return
 
 	def getamp(self):
 		tau = (self.t-self.t0)/ self.tE 
@@ -111,6 +113,27 @@ class PSPL(object):
 		u_amp = np.apply_along_axis(np.linalg.norm, 1, u)
 		A = (u_amp**2 + 2)/(u_amp*np.sqrt(u_amp**2 +4))
 		return A
+
+	def get_centroid_shift(self):
+		dt_in_years = (self.t - self.t0)/365
+		tau = (self.t - self.t0) / self.tE
+
+		# Shape of arrays:
+		# thetaS: [N_times, 2]
+		# u: [N_times, 2]
+		# u_amp: [N_times]
+		thetaS = self.thetaS0 + np.outer(dt_in_years, self.muRel) # mas
+		u = thetaS / self.thetaE1
+		u_amp = np.apply_along_axis(np.linalg.norm, 1, u)
+
+		shift_norm_factor = u_amp**2 + 2.0
+
+		shift = thetaS*(self.thetaE1*100)
+		shift[:, 0] /= shift_norm_factor
+		shift[:, 1] /= shift_norm_factor
+                    
+		return shift
+
 
 def testPSPL():
 	#initial input variables 
@@ -135,16 +158,17 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 
 	#--------------DISPLAY---------------------------------------
 	origin = vector(0,0, -ac.idL)
+	print(ac.eradiuspc_adjusted)
 	#observers
 	OBPos = vector(0,0,1)
 	OB = sphere(pos = OBPos, radius = 1, color = white)
 
 	#SOURCE positioning
-	sPos = vector(ac.x0S, ac.y0S, -ac.idL)+OBPos
+	sPos = vector(ac.x0S, ac.y0S, -ac.idS)+OBPos
 	SOURCE = sphere(pos = sPos, radius = 30, color=blue)
 
 	#LENS positioning 
-	lPos = vector(ac.x0L, ac.y0L, -ac.idS)+OBPos
+	lPos = vector(ac.x0L, ac.y0L, -ac.idL)+OBPos
 	LENS = sphere(pos=lPos, radius = 50, color = yellow)
 	LENS.velocity = vector(1, 0, 0)
 	ER = ring(pos = lPos, radius = ac.eradiuspc_adjusted, axis = (0,0,1), thickness=15, color= white)
@@ -164,21 +188,21 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 
 	ldistplusm = np.tan(lthetaplus)*ac.dLS
 	ldistpluspc = ldistplusm * mtopc
-	ldistpluspc_adjusted = ldistpluspc/(ac.thetaE1*.8)
+	ldistpluspc_adjusted = ldistpluspc/(ac.eradiuspc_adjusted*0.013)
 
 	ldistminusm = np.tan(lthetaminus)*ac.dLS
 	ldistminuspc = ldistminusm * mtopc
-	ldistminuspc_adjusted = ldistminuspc*(ac.thetaE1*10**5)
+	ldistminuspc_adjusted = ldistminuspc*(ac.eradiuspc_adjusted*1600)
 
 
-	cent_adjusted = (ldistpluspc_adjusted*opacityplus+ldistminuspc_adjusted*opacityminus)/(opacityplus+opacityminus)
+	#cent_adjusted = (ldistpluspc_adjusted*opacityplus+ldistminuspc_adjusted*opacityminus)/(opacityplus+opacityminus)
 
 	#LETS DRAW THE LIGHT CURVES
 	plpos = vector(-ldistpluspc_adjusted,0,-ac.idL)
 	pluslight = sphere(pos=plpos, radius = 20, color = yellow, opacity = opacityplus)
 	plneg = vector(-ldistminuspc_adjusted, 0, -ac.idL)
 	minuslight = sphere(pos=plneg, radius = 20, color = red, opacity = opacityminus)
-	cenpos = vector(-cent_adjusted, 0, -ac.idL)
+	cenpos = vector(0,0, -ac.idL)
 	cenlight = sphere(pos=cenpos, radius = 20, color = white, opacity = opacitycen)
 	#LABELS
 	lmasslabel = label(pos = origin, text = 'ML: '+ str(ac.imL) +' solar masses', xoffset = xoff, yoffset = 140, height = textsize, color = white, line = False)
@@ -200,6 +224,7 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 	A = ac.getamp()
 	lvel = LENS.velocity
 	x = 0
+
 	#GRAPHS
 	ampgraph = gdisplay(x=0, y = 350, width=500, height=300, title = 'AMP vs T', xtitle = 't', ytitle = 'amp', ymin = 1, ymax = A[ac.tr], xmin = ac.t0-ac.tr, xmax = ac.t0+ac.tr)
 	ampcurve = gcurve(gdisplay = ampgraph, color = white)
@@ -218,7 +243,10 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 	pluslightxy = gcurve(gdisplay = lightxy, color = yellow)
 	minuslightxy = gcurve(gdisplay = lightxy, color = red)
 	cenlightxy = gcurve(gdisplay = lightxy, color = white)
-	
+
+	cs = ac.get_centroid_shift()
+	csx = cs[:,0]
+	csy = cs[:,1]
 	for time in ac.t:
 		LENS.pos = LENS.pos + lvel
 		llabel.pos = llabel.pos + lvel
@@ -234,15 +262,15 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 			pluslight.pos.y = -np.sin(rotateangle)*ldistpluspc_adjusted
 			minuslight.pos.x = -np.cos(rotateangle)*ldistminuspc_adjusted
 			minuslight.pos.y = -np.sin(rotateangle)*ldistminuspc_adjusted
-			cenlight.pos.x = -np.cos(rotateangle)*cent_adjusted
-			cenlight.pos.y = -np.sin(rotateangle)*cent_adjusted
+
 		elif time-ac.t0 > 0.0 and time-ac.t0 < ac.tr:
 			pluslight.pos.x = np.cos(rotateangle)*ldistpluspc_adjusted
 			pluslight.pos.y = np.sin(rotateangle)*ldistpluspc_adjusted
 			minuslight.pos.x = np.cos(rotateangle)*ldistminuspc_adjusted
 			minuslight.pos.y = np.sin(rotateangle)*ldistminuspc_adjusted
-			cenlight.pos.x = np.cos(rotateangle)*cent_adjusted
-			cenlight.pos.y = np.sin(rotateangle)*cent_adjusted
+
+		cenlight.pos.x = csx[x]
+		cenlight.pos.y = csy[x]
 
 
 		pluslight.opacity = opacityplus*A[x]
@@ -268,7 +296,6 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 
 		x = x+1
 		
-		print(cent_adjusted)
 		rate(500)
 		
 

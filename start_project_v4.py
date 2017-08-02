@@ -93,6 +93,9 @@ class PSPL(object):
 		self.u0_amp = self.beta / self.thetaE1
 		self.u0 = np.abs(self.u0_amp) * self.u0_hat
 
+		#angular separation between source and lens vector
+		self.thetaS0 = self.u0 * self.thetaE1
+
 		return
 
 
@@ -112,6 +115,26 @@ class PSPL(object):
 		A = (u_amp**2 + 2)/(u_amp*np.sqrt(u_amp**2 +4))
 		return A
 
+	def get_centroid_shift(self):
+		dt_in_years = (self.t - self.t0)/365
+		tau = (self.t - self.t0) / self.tE
+
+		# Shape of arrays:
+		# thetaS: [N_times, 2]
+		# u: [N_times, 2]
+		# u_amp: [N_times]
+		thetaS = self.thetaS0 + np.outer(dt_in_years, self.muRel) # mas
+		u = thetaS / self.thetaE1
+		u_amp = np.apply_along_axis(np.linalg.norm, 1, u)
+
+		shift_norm_factor = u_amp**2 + 2.0
+
+		shift = thetaS
+		shift[:, 0] /= shift_norm_factor
+		shift[:, 1] /= shift_norm_factor
+                    
+		return shift
+
 def testPSPL():
 	#initial input variables 
 	imL = 10.0 #solar mass 
@@ -121,7 +144,7 @@ def testPSPL():
 	tr = 2000.0
 	muS =  np.array([8.0, 0.0])
 	muL =  np.array([0.00, 0.00])
-	beta = 1.8
+	beta = 2.0
 	x0S = 0.0
 	y0S = 0.0
 	y0L = 100.0
@@ -136,15 +159,13 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 	#--------------DISPLAY---------------------------------------
 	origin = vector(0,0, -ac.idL)
 	#observers
-	OBPos = vector(0,0,1)
-	OB = sphere(pos = OBPos, radius = 1, color = white)
 
 	#SOURCE positioning
-	sPos = vector(ac.x0S, ac.y0S, -ac.idS)+OBPos
+	sPos = vector(ac.x0S, ac.y0S, -ac.idS)
 	SOURCE = sphere(pos = sPos, radius = 30, color=blue)
 
 	#LENS positioning 
-	lPos = vector(ac.x0L, ac.y0L, -ac.idL)+OBPos
+	lPos = vector(ac.x0L, ac.y0L, -ac.idL)
 	LENS = sphere(pos=lPos, radius = 50, color = yellow)
 	LENS.velocity = vector(1, 0, 0)
 	ER = ring(pos = lPos, radius = ac.eradiuspc_adjusted, axis = (0,0,1), thickness=15, color= white)
@@ -169,17 +190,17 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 
 	ldistminusm = np.tan(lthetaminus)*ac.dLS
 	ldistminuspc = ldistminusm * mtopc
-	ldistminuspc_adjusted = ldistminuspc*(ac.thetaE1*950000)
+	ldistminuspc_adjusted = ldistminuspc*(ac.thetaE1*600000)
 
 
-	cent_adjusted = (ldistpluspc_adjusted*opacityplus+ldistminuspc_adjusted*opacityminus)/(opacityplus+opacityminus)
+	#cent_adjusted = (ldistpluspc_adjusted*opacityplus+ldistminuspc_adjusted*opacityminus)/(opacityplus+opacityminus)
 
 	#LETS DRAW THE LIGHT CURVES
 	plpos = vector(-ldistpluspc_adjusted,0,-ac.idS)
 	pluslight = sphere(pos=plpos, radius = 30, color = yellow, opacity = opacityplus)
 	plneg = vector(-ldistminuspc_adjusted, 0, -ac.idS)
 	minuslight = sphere(pos=plneg, radius = 30, color = red, opacity = opacityminus)
-	cenpos = vector(-cent_adjusted, 0, -ac.idS)
+	cenpos = vector(SOURCE.pos)
 	cenlight = sphere(pos=cenpos, radius = 30, color = white, opacity = opacitycen)
 	#LABELS
 	lmasslabel = label(pos = origin, text = 'ML: '+ str(ac.imL) +' solar masses', xoffset = xoff, yoffset = 140, height = textsize, color = white, line = False)
@@ -199,7 +220,11 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 
 	#DISPLAY
 	rA = ac.getamp()
+	rcs = ac.get_centroid_shift()
 	A = ac.getamp()**80
+	cs = ac.get_centroid_shift()*100
+	csx = cs[:, 0]
+	csy = cs[:, 1]
 	lvel = LENS.velocity
 	x = 0
 	#GRAPHS
@@ -236,15 +261,15 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 			pluslight.pos.y = -np.sin(rotateangle)*ldistpluspc_adjusted
 			minuslight.pos.x = -np.cos(rotateangle)*ldistminuspc_adjusted
 			minuslight.pos.y = -np.sin(rotateangle)*ldistminuspc_adjusted
-			cenlight.pos.x = -np.cos(rotateangle)*cent_adjusted
-			cenlight.pos.y = -np.sin(rotateangle)*cent_adjusted
+
 		elif time-ac.t0 > 0.0 and time-ac.t0 < ac.tr:
 			pluslight.pos.x = np.cos(rotateangle)*ldistpluspc_adjusted
 			pluslight.pos.y = np.sin(rotateangle)*ldistpluspc_adjusted
 			minuslight.pos.x = np.cos(rotateangle)*ldistminuspc_adjusted
 			minuslight.pos.y = np.sin(rotateangle)*ldistminuspc_adjusted
-			cenlight.pos.x = np.cos(rotateangle)*cent_adjusted
-			cenlight.pos.y = np.sin(rotateangle)*cent_adjusted
+
+		cenlight.pos.x = csx[x]
+		cenlight.pos.y = csy[x]
 
 
 		pluslight.opacity = opacityplus*A[x]

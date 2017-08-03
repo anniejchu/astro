@@ -186,7 +186,7 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 
 	ldistplusm = np.tan(lthetaplus)*ac.dLS
 	ldistpluspc = ldistplusm * mtopc
-	ldistpluspc_adjusted = ldistpluspc/(ac.thetaE1*.5)
+	ldistpluspc_adjusted = ldistpluspc/(ac.thetaE1*.8)
 
 	ldistminusm = np.tan(lthetaminus)*ac.dLS
 	ldistminuspc = ldistminusm * mtopc
@@ -258,15 +258,15 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 			rotateangle = 0.0
 		if time-ac.t0 > -ac.tr and time-ac.t0 < 0.0:
 			pluslight.pos.x = -np.cos(rotateangle)*ldistpluspc_adjusted
-			pluslight.pos.y = -np.sin(rotateangle)*ldistpluspc_adjusted
+			pluslight.pos.y = np.sin(rotateangle)*ldistpluspc_adjusted
 			minuslight.pos.x = -np.cos(rotateangle)*ldistminuspc_adjusted
-			minuslight.pos.y = -np.sin(rotateangle)*ldistminuspc_adjusted
+			minuslight.pos.y = np.sin(rotateangle)*ldistminuspc_adjusted
 
 		elif time-ac.t0 > 0.0 and time-ac.t0 < ac.tr:
 			pluslight.pos.x = np.cos(rotateangle)*ldistpluspc_adjusted
-			pluslight.pos.y = np.sin(rotateangle)*ldistpluspc_adjusted
+			pluslight.pos.y = -np.sin(rotateangle)*ldistpluspc_adjusted
 			minuslight.pos.x = np.cos(rotateangle)*ldistminuspc_adjusted
-			minuslight.pos.y = np.sin(rotateangle)*ldistminuspc_adjusted
+			minuslight.pos.y = -np.sin(rotateangle)*ldistminuspc_adjusted
 
 		cenlight.pos.x = csx[x]
 		cenlight.pos.y = csy[x]
@@ -275,7 +275,7 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 		pluslight.opacity = opacityplus*A[x]
 		minuslight.opacity = opacityminus*A[x]
 		cenlight.opacity = opacitycen*A[x]
-		amplabel.text = 'AMP (**2.5) : '+str(rA[x])
+		amplabel.text = 'AMP  : '+str(rA[x])
 		tlabel.text = 'Time: '+str(time-ac.t0)	
 		sourceposlabel.text = 'source x: '+str(SOURCE.pos.x)+' y: '+str(SOURCE.pos.y)
 		lensposlabel.text = 'lens x: '+str(LENS.pos.x)+' y: '+str(LENS.pos.y)

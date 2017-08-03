@@ -128,7 +128,6 @@ def testPSPL():
 	beta = 2.0
 	x0S = 0.0
 	y0S = 0.0
-	y0L = 50.0
 
 	draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S)
 

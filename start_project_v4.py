@@ -137,7 +137,7 @@ class PSPL(object):
 
 def testPSPL():
 	#initial input variables 
-	imL = 4.0 #solar mass 
+	imL = 5.0 #solar mass 
 	idL = 4000.0 #pc
 	idS = 8000.0 #pc
 	t0 = 57000.0
@@ -174,8 +174,7 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 	thetaS = diff_angle(LENS.pos, SOURCE.pos)
 	lthetaplus = (thetaS+np.sqrt((thetaS**2)+(4*ac.thetaE)))/2
 	lthetaminus = (thetaS-np.sqrt((thetaS**2)+(4*ac.thetaE)))/2
-	print(lthetaplus)
-	print(lthetaminus)
+
 	thetaS1 = thetaS * radtomas
 	lthetaplus1 = lthetaplus* radtomas
 	lthetaminus1 = lthetaminus * radtomas
@@ -186,14 +185,12 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 
 	ldistplusm = np.tan(lthetaplus)*ac.dLS
 	ldistpluspc = ldistplusm * mtopc
-	ldistpluspc_adjusted = ldistpluspc/(ac.eradiuspc_adjusted*.015)
+	ldistpluspc_adjusted = (ldistpluspc/ac.thetaE1)*0.87
 
 	ldistminusm = np.tan(lthetaminus)*ac.dLS
 	ldistminuspc = ldistminusm * mtopc
-	ldistminuspc_adjusted = ldistminuspc*(ac.eradiuspc_adjusted*12000)
-
-
-	#cent_adjusted = (ldistpluspc_adjusted*opacityplus+ldistminuspc_adjusted*opacityminus)/(opacityplus+opacityminus)
+	ldistminuspc_adjusted = (ldistminuspc/ac.thetaE1)*(7.5*10**6)
+	
 
 	#LETS DRAW THE LIGHT CURVES
 	plpos = vector(-ldistpluspc_adjusted,0,-ac.idS)

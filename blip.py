@@ -7,7 +7,6 @@ scene.autoscale = False
 scene.range = 100
 scene.title = 'BLIP'
 
-
 #color variables 
 red = (1,0,0)
 green = (0,1,0)
@@ -19,10 +18,7 @@ magenta = (1,0,1)
 black = (0,0,0)
 white = (1,1,1)
 
-
-
 # conversions and constants
-
 G = 6.67 * 10**-11
 c = 3.0 * 10**8
 radtomas = 206265000
@@ -51,6 +47,8 @@ class PSPL(object):
 		self.dL = self.idL * pctom
 		self.dS = self.idS * pctom
 		self.dLS = self.dS-self.dL
+		self.idLS = self.idS-self.idL
+		self.off = (tan(self.beta/radtomas)*self.idLS)*10**5 
 		#relative velocity vector
 		self.muRel = self.muS - self.muL
 		self.muRel1 = np.linalg.norm(self.muRel)
@@ -142,21 +140,21 @@ def randostars():
 		sphere(pos=(rx[x],ry[x],0), radius = radius[x], color = color.white, opacity = opacity[x])
 
 
-
 def sourcemoving(imL, idL, idS, t0, muS, muL, beta, x0S, y0S, x0L, y0L):
 	it = PSPL(imL, idL, idS, t0, muS, muL, beta, x0S, y0S, x0L, y0L)
 	opacity = 0.1
-	#####################################################################3
+
+	#####################################################################
 	source = sphere(pos=(x0S,y0S,0), radius = 1.5, color = color.white, opacity = 0.5)
 	lens = ring(pos=(x0L, y0L, 0), radius = 2.5, thickness = 0.4, color = color.white, axis = (0,0,1))
 	centroid = sphere(pos = lens.pos, radius = 1, color = color.white, opacity = opacity)
 	sourcev = vector(x0S,y0S,0)
 
-	movex = (x0L-x0S)/(x0L-x0S)
+	movex = ((x0L-x0S)-it.off)/(x0L-x0S)
 	movey = (y0L-y0S)/(x0L-x0S)
 	
-	A = it.getamp()**5
-	cs = it.get_centroid_shift()*4
+	A = it.getamp()**10
+	cs = it.get_centroid_shift()*5
 	csx = cs[:,0]
 	csy = cs[:,1]
 	m = 0
@@ -164,14 +162,14 @@ def sourcemoving(imL, idL, idS, t0, muS, muL, beta, x0S, y0S, x0L, y0L):
 	for time in it.t:
 		source.x = movex + source.x
 		source.y = movey + source.y
-		if time-it.t0 < 5 and time-it.t0 > -5:
+		if time-it.t0 < 2*it.off and time-it.t0 > -2*it.off:
 			centroid.x = lens.x-csx[m]
 			centroid.y = lens.y-csy[m]
 			centroid.opacity = opacity * A[o]
 			source.opacity = 0.0
-			m = m+19
-			o = o+10
-		elif time-it.t0 > 5:
+			m = m+10
+			o = o+5
+		elif time-it.t0 > -it.off:
 			centroid.opacity = 0.0
 			source.opacity = 0.5
 	
@@ -180,8 +178,8 @@ def sourcemoving(imL, idL, idS, t0, muS, muL, beta, x0S, y0S, x0L, y0L):
 
 def testing():
 	imL = 10.0 #solar mass 
-	idL = 4000.0 #pc
-	idS = 8000.0 #pc
+	idL = 4000.0 #kpc
+	idS = 8000.0 #kpc
 	t0 = 57000.0
 	muS =  np.array([0.0, 0.0])
 	muL =  np.array([8.00, 0.00])

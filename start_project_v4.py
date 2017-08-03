@@ -137,7 +137,7 @@ class PSPL(object):
 
 def testPSPL():
 	#initial input variables 
-	imL = 10.0 #solar mass 
+	imL = 4.0 #solar mass 
 	idL = 4000.0 #pc
 	idS = 8000.0 #pc
 	t0 = 57000.0
@@ -147,7 +147,7 @@ def testPSPL():
 	beta = 2.0
 	x0S = 0.0
 	y0S = 0.0
-	y0L = 100.0
+	y0L = 50.0
 
 	draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L)
 
@@ -186,11 +186,11 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 
 	ldistplusm = np.tan(lthetaplus)*ac.dLS
 	ldistpluspc = ldistplusm * mtopc
-	ldistpluspc_adjusted = ldistpluspc/(ac.thetaE1*.8)
+	ldistpluspc_adjusted = ldistpluspc/(ac.eradiuspc_adjusted*.015)
 
 	ldistminusm = np.tan(lthetaminus)*ac.dLS
 	ldistminuspc = ldistminusm * mtopc
-	ldistminuspc_adjusted = ldistminuspc*(ac.thetaE1*600000)
+	ldistminuspc_adjusted = ldistminuspc*(ac.eradiuspc_adjusted*12000)
 
 
 	#cent_adjusted = (ldistpluspc_adjusted*opacityplus+ldistminuspc_adjusted*opacityminus)/(opacityplus+opacityminus)
@@ -207,11 +207,11 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 	ldistancelabel = label(pos = origin, text = 'DL: '+str(ac.idL)+' parsecs', xoffset = xoff,yoffset= 120, height = textsize, color = white, line = False)
 	sdistancelabel = label(pos = origin, text = 'DS: '+str(ac.idS)+ ' parsecs', xoffset = xoff, yoffset = 100, height = textsize, color = white, line = False)
 	erlabel1 = label(pos = origin, text = 'ER(mas): '+str(ac.thetaE1), xoffset = xoff, yoffset = 80, height = textsize, color =white, line = False)
-
+	'''
 	llabel = label(pos = LENS.pos, text = 'L', height = textsize-2, color =white, line = False)
 	slabel = label(pos = SOURCE.pos, text = 'S', yoffset = 2, height = textsize, color =white, line = False)
 	erlabel = label(pos = ER.pos, text = 'ER', yoffset = llabel.yoffset+50, height = textsize-2, color = white, line = False)
-
+	'''
 	amplabel = label(pos = origin, yoffset = -120, text = '', height = textsize, line=False)
 	tlabel = label(pos=origin, yoffset= -100, text = '', height = textsize, line = False)
 	sourceposlabel = label(pos = origin, yoffset = -100, xoffset = xoff, text = '', height = textsize, line=False)
@@ -248,9 +248,9 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
 	
 	for time in ac.t:
 		LENS.pos = LENS.pos + lvel
-		llabel.pos = llabel.pos + lvel
+		#llabel.pos = llabel.pos + lvel
 		ER.pos = ER.pos + lvel
-		erlabel.pos = erlabel.pos + lvel
+		#erlabel.pos = erlabel.pos + lvel
 		xdiff = LENS.pos.x-SOURCE.pos.x
 		if xdiff !=0:		
 			rotateangle = np.arctan(200.0/xdiff)

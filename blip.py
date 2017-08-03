@@ -152,12 +152,12 @@ def sourcemoving(imL, idL, idS, t0, muS, muL, beta, x0S, y0S, x0L, y0L):
 	movex = ((x0L-x0S)-it.off)/((x0L-x0S)-it.off)
 	movey = (y0L-y0S)/((x0L-x0S)-it.off)
 	
-	A = it.getamp()**10
+	A = it.getamp()**3
 	cs = it.get_centroid_shift()*5
 	csx = cs[:,0]
 	csy = cs[:,1]
 	m = 0
-	o = len(A)/2-5
+	o = 0
 	for time in it.t:
 		source.x = movex + source.x
 		source.y = movey + source.y
@@ -166,8 +166,8 @@ def sourcemoving(imL, idL, idS, t0, muS, muL, beta, x0S, y0S, x0L, y0L):
 			centroid.y = lens.y-csy[m]
 			centroid.opacity = opacity * A[o]
 			source.opacity = 0.0
-			m = m+10
-			o = o+5
+			m = m+(len(cs)/(it.off*4))
+			o = m+(len(A)/(it.off*4))
 		elif time-it.t0 > -it.off:
 			centroid.opacity = 0.0
 			source.opacity = 0.5

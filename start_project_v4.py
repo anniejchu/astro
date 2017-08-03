@@ -1,18 +1,14 @@
-
 from visual import *
 from visual.graph import *
 import numpy as np
 import pdb
 #setup
 scene = display(title = 'microlensing', width = 750, height = 350, background = color.black)
-
 scene.autoscale = False
-
 
 #random variables
 textsize = 10
 xoff = -200
-
 
 #color variables 
 red = (1,0,0)
@@ -25,10 +21,7 @@ magenta = (1,0,1)
 black = (0,0,0)
 white = (1,1,1)
 
-
-
 # conversions and constants
-
 G = 6.67 * 10**-11
 c = 3.0 * 10**8
 radtomas = 206265000
@@ -37,7 +30,7 @@ smtokg = 1.99 * (10 ** 30)
 pctom = 30856775714409184
 
 class PSPL(object):
-	def __init__(self, imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
+	def __init__(self, imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 		self.imL = imL
 		self.idL = idL
 		self.idS = idS
@@ -48,34 +41,30 @@ class PSPL(object):
 		self.beta = beta
 		self.x0S = x0S
 		self.y0S = x0S
-		self.y0L = y0L
 
 		#basic
 		self.t = np.arange(self.t0-self.tr, self.t0+self.tr)
 		self.mL = self.imL * smtokg
 		self.dL = self.idL * pctom
 		self.dS = self.idS * pctom
+		self.idLS = self.idS-self.idL
 		self.dLS = self.dS-self.dL
 		self.x0L = -self.tr
+		self.y0L = (tan(self.beta/radtomas)*self.idLS)*10
 		#relative velocity vector
 		self.muRel = self.muS - self.muL
 		self.muRel1 = np.linalg.norm(self.muRel)
-
 		#calculating einstein radius 
 		inv_dist_diff = (1.0/self.dL)-(1.0/self.dS)
 		self.thetaE = (np.sqrt((4.0*G*self.mL/c**2) * inv_dist_diff)) # radians
 		self.thetaE1 = self.thetaE * radtomas #in mas
 		self.thetaE_hat = self.muRel/ self.muRel1
-
 		#finding einstein radius distance from center
 		eradiusm = np.tan(self.thetaE)*self.dL #meters
 		eradiuspc = eradiusm*mtopc #pc
 		self.eradiuspc_adjusted = eradiuspc*10**6.8
-
-
 		#einstein crossing time
 		self.tE = (self.thetaE1/self.muRel1) * 365
-
 		#closest approach vector
 		self.u0_hat = np.zeros(2, dtype = float)
 		if beta > 0:
@@ -95,34 +84,26 @@ class PSPL(object):
 
 		#angular separation between source and lens vector
 		self.thetaS0 = self.u0 * self.thetaE1
-
+		
 		return
-
 
 	def getamp(self):
 		tau = (self.t-self.t0)/ self.tE 
 		u0 = self.u0.reshape(1, len(self.u0))
 		thetaE_hat = self.thetaE_hat.reshape(1,len(self.thetaE_hat))
 		tau = tau.reshape(len(tau), 1)
-
 		#shape of u [n, 2]
 		u = u0 + tau * thetaE_hat
-
-		#shape of u amp
-	#	pdb.set_trace()
-
 		u_amp = np.apply_along_axis(np.linalg.norm, 1, u)
 		A = (u_amp**2 + 2)/(u_amp*np.sqrt(u_amp**2 +4))
+		
 		return A
 
 	def get_centroid_shift(self):
 		dt_in_years = (self.t - self.t0)/365
 		tau = (self.t - self.t0) / self.tE
 
-		# Shape of arrays:
-		# thetaS: [N_times, 2]
-		# u: [N_times, 2]
-		# u_amp: [N_times]
+		# Shape of arrays: 1) thetaS: [N_times, 2] 2) u: [N_times, 2] 3) u_amp: [N_times]
 		thetaS = self.thetaS0 + np.outer(dt_in_years, self.muRel) # mas
 		u = thetaS / self.thetaE1
 		u_amp = np.apply_along_axis(np.linalg.norm, 1, u)
@@ -131,8 +112,8 @@ class PSPL(object):
 
 		shift = thetaS
 		shift[:, 0] /= shift_norm_factor
-		shift[:, 1] /= shift_norm_factor
-                    
+		shift[:, 1] /= shift_norm_factor                    
+		
 		return shift
 
 def testPSPL():
@@ -149,13 +130,13 @@ def testPSPL():
 	y0S = 0.0
 	y0L = 50.0
 
-	draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L)
+	draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S)
 
 	return
 
-def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L):
-	ac = PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S, y0L)
-
+def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
+	ac = PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S)
+	print(ac.y0L)
 	#--------------DISPLAY---------------------------------------
 	origin = vector(0,0, -ac.idL)
 	#observers

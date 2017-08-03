@@ -143,15 +143,14 @@ def randostars():
 def sourcemoving(imL, idL, idS, t0, muS, muL, beta, x0S, y0S, x0L, y0L):
 	it = PSPL(imL, idL, idS, t0, muS, muL, beta, x0S, y0S, x0L, y0L)
 	opacity = 0.1
-
 	#####################################################################
 	source = sphere(pos=(x0S,y0S,0), radius = 1.5, color = color.white, opacity = 0.5)
 	lens = ring(pos=(x0L, y0L, 0), radius = 2.5, thickness = 0.4, color = color.white, axis = (0,0,1))
 	centroid = sphere(pos = lens.pos, radius = 1, color = color.white, opacity = opacity)
 	sourcev = vector(x0S,y0S,0)
 
-	movex = ((x0L-x0S)-it.off)/(x0L-x0S)
-	movey = (y0L-y0S)/(x0L-x0S)
+	movex = ((x0L-x0S)-it.off)/((x0L-x0S)-it.off)
+	movey = (y0L-y0S)/((x0L-x0S)-it.off)
 	
 	A = it.getamp()**10
 	cs = it.get_centroid_shift()*5
@@ -173,7 +172,6 @@ def sourcemoving(imL, idL, idS, t0, muS, muL, beta, x0S, y0S, x0L, y0L):
 			centroid.opacity = 0.0
 			source.opacity = 0.5
 	
-
 		rate(10)
 
 def testing():

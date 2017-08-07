@@ -140,7 +140,7 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 	ac = PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S)
 	rA = ac.getamp()
 	rcs = ac.get_centroid_shift()
-	A = ac.getamp()**20
+	A = ac.getamp()**10
 	cs = ac.get_centroid_shift()*100
 	csx = cs[:, 0]
 	csy = cs[:, 1]
@@ -189,20 +189,30 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 	cenpos = vector(SOURCE.pos)
 	cenlight = sphere(pos=cenpos, radius = 30, color = white, opacity = opacitycen)
 	#LABELS
-	lmasslabel = label(pos = origin, text = 'ML: '+ str(ac.imL) +' solar masses', xoffset = xoff, yoffset = 140, height = textsize, color = white, line = False)
-	ldistancelabel = label(pos = origin, text = 'DL: '+str(ac.idL)+' parsecs', xoffset = xoff,yoffset= 120, height = textsize, color = white, line = False)
-	sdistancelabel = label(pos = origin, text = 'DS: '+str(ac.idS)+ ' parsecs', xoffset = xoff, yoffset = 100, height = textsize, color = white, line = False)
-	erlabel1 = label(pos = origin, text = 'ER(mas): '+str(round(ac.thetaE1, 2))+' mas', xoffset = xoff, yoffset = 80, height = textsize, color =white, line = False)
-	telabel= label(pos = origin, text = 'TE: '+str(int(ac.tE))+' days', xoffset = xoff, yoffset= 60, height = textsize, color = color.white, line = False)
+	plabel = label(pos = origin, text = 'PARAMETERS', xoffset = xoff-5, yoffset = 140, height = textsize+3, color = white, line = False)
+	lmasslabel = label(pos = origin, text = 'ML: '+ str(ac.imL) +' solar masses', xoffset = xoff, yoffset = 110, height = textsize, color = white, line = False, box = False)
+	ldistancelabel = label(pos = origin, text = 'DL: '+str(ac.idL)+' parsecs', xoffset = xoff,yoffset= 90, height = textsize, color = white, line = False, box = False)
+	sdistancelabel = label(pos = origin, text = 'DS: '+str(ac.idS)+ ' parsecs', xoffset = xoff, yoffset = 70, height = textsize, color = white, line = False, box = False)
+	betalabel = label(pos = origin, text = 'beta: '+str(ac.beta)+ ' mas', xoffset = xoff, yoffset = 50, height = textsize, color = white, line = False, box = False)
+	tr0label = label(pos = origin, text = 't0: '+str(ac.t0)+' tr: '+str(ac.tr), xoffset = xoff, yoffset = 30, height = textsize, color = white, line = False, box = False)
+
+
+	line = paths.line(start=(-550, 30), end=(-300, 30))
+	curve(pos=line.pos)
+
+	mlalabel = label(pos = origin, text = 'MICROLENSING ANIMATOR', xoffset=160, yoffset = 140, height = textsize+3, line=False)
+
+	erlabel1 = label(pos = origin, text = 'ER(mas): '+str(round(ac.thetaE1, 2))+' mas', xoffset = xoff, yoffset = 0, height = textsize, color =white, line = False, box = False)
+	telabel= label(pos = origin, text = 'TE: '+str(int(ac.tE))+' days', xoffset = xoff, yoffset= -20, height = textsize, color = color.white, line = False, box = False)
 	'''
 	llabel = label(pos = LENS.pos, text = 'L', height = textsize-2, color =white, line = False)
 	slabel = label(pos = SOURCE.pos, text = 'S', yoffset = 2, height = textsize, color =white, line = False)
 	erlabel = label(pos = ER.pos, text = 'ER', yoffset = llabel.yoffset+50, height = textsize-2, color = white, line = False)
 	'''
-	amplabel = label(pos = origin, yoffset = -120, text = '', height = textsize, line=False)
-	tlabel = label(pos=origin, yoffset= -100, text = '', height = textsize, line = False)
-	sourceposlabel = label(pos = origin, yoffset = -100, xoffset = xoff, text = '', height = textsize, line=False)
-	lensposlabel = label(pos = origin, yoffset = -80, xoffset = xoff, text = '', height = textsize, line=False)
+	amplabel = label(pos = origin, yoffset = -130, text = '', height = textsize+2, line=False, box = False)
+	tlabel = label(pos=origin, yoffset= -110, text = '', height = textsize+2, line = False, box = False)
+	sourceposlabel = label(pos = origin, yoffset = -110, xoffset = -xoff, text = '', height = textsize, line=False, box = False)
+	lensposlabel = label(pos = origin, yoffset = -130, xoffset = -xoff, text = '', height = textsize, line=False, box = False)
 
 
 	#DISPLAY
@@ -245,8 +255,8 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 		pluslight.opacity = opacityplus*A[x]
 		minuslight.opacity = opacityminus*A[x]
 		cenlight.opacity = opacitycen*A[x]
-		amplabel.text = 'AMP : '+str(round(rA[x], 6))+' (animation amp e80)'
-		tlabel.text = 'Time (days): '+str(time-ac.t0)	
+		amplabel.text = 'AMP : '+str(round(rA[x], 6))
+		tlabel.text = 'Time (days): '+str(time)	
 		sourceposlabel.text = 'source x: '+str(SOURCE.pos.x)+' y: '+str(SOURCE.pos.y)
 		lensposlabel.text = 'lens x: '+str(round(LENS.pos.x, 4))+' y: '+str(round(LENS.pos.y, 6))
 

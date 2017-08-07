@@ -120,19 +120,21 @@ class PSPL(object):
 def testPSPL():
 	#initial input variables 
 	imL = float(input("Enter BH mass (in solar masses): ")) #solar mass 5.0
-	idL = 4000.0 #pc
-	idS = 8000.0 #pc
-	t0 = 57000.0
-	tr = 2000.0
-	muS =  np.array([8.0, 0.0])
-	muL =  np.array([0.00, 0.00])
-	beta = 2.0
+	idL = float(input("Enter distance to lens (pc): ")) #4000.0 #pc
+	idS = float(input("Enter distance to source (pc): "))#8000.0 #pc
+	t0 = float(input("enter t0: ")) #57000.0
+	tr = float(input("enter time range: ")) #2000.0
+	muS =  np.array([0.00, 0.00])
+	muL =  np.array([8.00, 0.00])
+	beta = float(input("enter beta: ")) #2.0
 	x0S = 0.0
 	y0S = 0.0
 
 	draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S)
 
 	return
+
+
 
 def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 	ac = PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S)
@@ -270,7 +272,6 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 		
 		rate(200)
 		
-
 
 
 testPSPL()

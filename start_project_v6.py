@@ -218,12 +218,12 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 	minuslightx = gcurve(gdisplay = lightcoordinatesx, color = red)
 	cenlightx = gcurve(gdisplay = lightcoordinatesx, color = white)
 
-	lightcoordinatesy = gdisplay(x=725, y = 0, width=650, height=350, title = 'LIGHT CURVE(Y) vs T', xtitle = 't', ytitle = 'y value', ymin = plcy[ac.tr], ymax = mlcy[ac.tr], xmin = ac.t0-ac.tr, xmax = ac.t0+ac.tr)
+	lightcoordinatesy = gdisplay(x=725, y = 0, width=650, height=350, title = 'LIGHT CURVE(Y) vs T', xtitle = 't', ytitle = 'y value', ymin = plcy[ac.tr], ymax = -plcy[ac.tr], xmin = ac.t0-ac.tr, xmax = ac.t0+ac.tr)
 	pluslighty = gcurve(gdisplay = lightcoordinatesy, color = yellow)
 	minuslighty = gcurve(gdisplay = lightcoordinatesy, color = red)
 	cenlighty = gcurve(gdisplay = lightcoordinatesy, color = white)
 	
-	lightxy = gdisplay(x=480, y = 340, width =420, height = 500, title = 'LIGHT CURVE (X VS Y)', xtitle = 'x', ytitle = 'y', ymin = min(plcy), ymax = max(mlcy), xmin = min(plcx), xmax = max(plcx))
+	lightxy = gdisplay(x=480, y = 340, width =420, height = 500, title = 'LIGHT CURVE (X VS Y)', xtitle = 'x', ytitle = 'y', ymin = min(plcy), ymax = -min(plcy), xmin = min(plcx), xmax = max(plcx))
 	pluslightxy = gcurve(gdisplay = lightxy, color = yellow)
 	minuslightxy = gcurve(gdisplay = lightxy, color = red)	
 	cenlightxy = gcurve(gdisplay = lightxy, color = white)

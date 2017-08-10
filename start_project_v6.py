@@ -8,7 +8,7 @@ scene.autoscale = False
 scene.range = 600
 
 #random variables
-textsize = 10
+textsize = 12
 xoff = -200
 
 #color variables 
@@ -140,7 +140,7 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 	ac = PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S)
 	rA = ac.getamp()
 	rcs = ac.get_centroid_shift()
-	A = ac.getamp()**10
+	A = ac.getamp()**20
 	cs = ac.get_centroid_shift()*100
 	csx = cs[:, 0]
 	csy = cs[:, 1]
@@ -151,18 +151,18 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 	mlcx = mlc[:,0]
 	mlcy = mlc[:,1]
 	eradiuspc_adjusted = ac.eradiuspc*(min(plcy)*10000)
-	print(ac.eradiuspc)
+
 	#--------------DISPLAY---------------------------------------
 	origin = vector(0,0, -ac.idL)
 	#observers
 
 	#SOURCE positioning
 	sPos = vector(ac.x0S, ac.y0S, -ac.idS)
-	SOURCE = sphere(pos = sPos, radius = 30, color=blue)
+	SOURCE = sphere(pos = sPos, radius = 25, color=cyan, material=materials.emissive)
 
 	#LENS positioning 
 	lPos = vector(ac.x0L, ac.y0L, -ac.idL)
-	LENS = sphere(pos=lPos, radius = 20, color = yellow)
+	LENS = sphere(pos=lPos, radius = 20, color = (0.5, 0.5, 0.5))
 	LENS.velocity = vector(1, 0, 0)
 
 	erpos = vector(lPos.x, lPos.y, -ac.idL)
@@ -183,11 +183,12 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 
 	#LETS DRAW THE LIGHT CURVES
 	plpos = vector(SOURCE.pos)
-	pluslight = sphere(pos=plpos, radius = 30, color = yellow, opacity = opacityplus)
+	pluslight = sphere(pos=plpos, radius = 40, color = yellow, opacity = opacityplus, material=materials.emissive)
+
 	plneg = vector(SOURCE.pos)
-	minuslight = sphere(pos=plneg, radius = 30, color = red, opacity = opacityminus)
+	minuslight = sphere(pos=plneg, radius = 40, color = magenta, opacity = opacityminus,  material=materials.emissive)
 	cenpos = vector(SOURCE.pos)
-	cenlight = sphere(pos=cenpos, radius = 30, color = white, opacity = opacitycen)
+	cenlight = sphere(pos=cenpos, radius = 40, color = white, opacity = opacitycen,  material=materials.emissive)
 	#LABELS
 	plabel = label(pos = origin, text = 'PARAMETERS', xoffset = xoff-5, yoffset = 140, height = textsize+3, color = white, line = False)
 	lmasslabel = label(pos = origin, text = 'ML: '+ str(ac.imL) +' solar masses', xoffset = xoff, yoffset = 110, height = textsize, color = white, line = False, box = False)
@@ -197,7 +198,7 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 	tr0label = label(pos = origin, text = 't0: '+str(ac.t0)+' tr: '+str(ac.tr), xoffset = xoff, yoffset = 30, height = textsize, color = white, line = False, box = False)
 
 
-	line = paths.line(start=(-550, 30), end=(-300, 30))
+	line = paths.line(start=(-550, 25), end=(-300, 25))
 	curve(pos=line.pos)
 
 	mlalabel = label(pos = origin, text = 'MICROLENSING ANIMATOR', xoffset=160, yoffset = 140, height = textsize+3, line=False)
@@ -216,28 +217,30 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 
 
 	#DISPLAY
-
 	lvel = LENS.velocity
 	x = 0
 	#GRAPHS
 	ampgraph = gdisplay(x=0, y = 340, width=500, height=500, title = 'AMP vs T', xtitle = 't', ytitle = 'amp', ymin = 1, ymax = rA[ac.tr], xmin = ac.t0-ac.tr, xmax = ac.t0+ac.tr)
 	ampcurve = gcurve(gdisplay = ampgraph, color = white)
 
-	lightcoordinatesx = gdisplay(x=880, y = 340, width=500, height=500, title = 'LIGHT CURVE(X) vs T', xtitle = 't', ytitle = 'x value', ymin = min(plcx), ymax = max(plcx), xmin = ac.t0-ac.tr, xmax = ac.t0+ac.tr)
+	lightcoordinatesx = gdisplay(x=880, y = 340, width=500, height=500, title = 'LIGHT CURVE(X) vs T', xtitle = 't', ytitle = 'x coordinate', ymin = min(plcx), ymax = max(plcx), xmin = ac.t0-ac.tr, xmax = ac.t0+ac.tr)
 	pluslightx = gcurve(gdisplay = lightcoordinatesx, color = yellow)
-	minuslightx = gcurve(gdisplay = lightcoordinatesx, color = red)
+	minuslightx = gcurve(gdisplay = lightcoordinatesx, color = magenta)
 	cenlightx = gcurve(gdisplay = lightcoordinatesx, color = white)
+	label(display=lightcoordinatesx.display, pos = (3,2), text = " Magenta = minor images \nYellow = major image \nWhite = centroid")
 
-	lightcoordinatesy = gdisplay(x=725, y = 0, width=650, height=350, title = 'LIGHT CURVE(Y) vs T', xtitle = 't', ytitle = 'y value', ymin = plcy[ac.tr], ymax = -plcy[ac.tr], xmin = ac.t0-ac.tr, xmax = ac.t0+ac.tr)
+
+	lightcoordinatesy = gdisplay(x=725, y = 0, width=650, height=350, title = 'LIGHT CURVE(Y) vs T', xtitle = 't', ytitle = 'y coordinate', ymin = plcy[ac.tr], ymax = -plcy[ac.tr], xmin = ac.t0-ac.tr, xmax = ac.t0+ac.tr)
 	pluslighty = gcurve(gdisplay = lightcoordinatesy, color = yellow)
-	minuslighty = gcurve(gdisplay = lightcoordinatesy, color = red)
+	minuslighty = gcurve(gdisplay = lightcoordinatesy, color = magenta)
 	cenlighty = gcurve(gdisplay = lightcoordinatesy, color = white)
 	
 	lightxy = gdisplay(x=480, y = 340, width =420, height = 500, title = 'LIGHT CURVE (X VS Y)', xtitle = 'x', ytitle = 'y', ymin = min(plcy), ymax = -min(plcy), xmin = min(plcx), xmax = max(plcx))
 	pluslightxy = gcurve(gdisplay = lightxy, color = yellow)
-	minuslightxy = gcurve(gdisplay = lightxy, color = red)	
+	minuslightxy = gcurve(gdisplay = lightxy, color = magenta)	
 	cenlightxy = gcurve(gdisplay = lightxy, color = white)
 	
+
 	for time in ac.t:
 		LENS.pos.x = LENS.pos.x + lvel.x
 		#llabel.pos = llabel.pos + lvel
@@ -250,7 +253,6 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 		pluslight.pos.y = plcy[x]
 		minuslight.pos.x = mlcx[x]
 		minuslight.pos.y = mlcy[x]
-
 
 		pluslight.opacity = opacityplus*A[x]
 		minuslight.opacity = opacityminus*A[x]
@@ -274,8 +276,9 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 
 		x = x+1
 		
-		rate(200)
+		rate(100)
 		
 
 
 testPSPL()
+

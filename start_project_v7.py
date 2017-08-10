@@ -147,13 +147,16 @@ def draw_PSPL(imL, idL, idS, t0, tr, muS, muL, beta, x0S, y0S):
 	eradius_adjusted = ac.thetaE1*100
 
 	#already scaled to einstein radius before scale factor
-	cs = ac.get_centroid_shift()*(eradius_adjusted/2.5)
+	cs_adj = ac.get_centroid_shift()/2.5
+	cs = cs_adj*eradius_adjusted
 	csx = cs[:, 0]
 	csy = cs[:, 1]
-	plc = ac.get_centroid_shift()*(eradius_adjusted*2.5)
+	plc_adj = cs_adj*6.25
+	plc = plc_adj*eradius_adjusted
 	plcx = plc[:,0]
 	plcy = plc[:,1]
-	mlc = -ac.get_centroid_shift()*(eradius_adjusted*.8)
+	mlc_adj = -cs_adj*2
+	mlc = mlc_adj*eradius_adjusted
 	mlcx = mlc[:,0]
 	mlcy = mlc[:,1]
 
